@@ -40,7 +40,7 @@ func TestParseFromYamlKuzudb(t *testing.T) {
                     database: /path/to/database.db
             `,
 			want: server.SourceConfigs{
-				"my-kuzu-db": kuzudb.KuzuDbConfig{
+				"my-kuzu-db": kuzudb.Config{
 					Name:     "my-kuzu-db",
 					Kind:     kuzudb.KuzuDbKind,
 					Database: "/path/to/database.db",
@@ -58,7 +58,7 @@ func TestParseFromYamlKuzudb(t *testing.T) {
 					readOnly: true
             `,
 			want: server.SourceConfigs{
-				"my-kuzu-db": kuzudb.KuzuDbConfig{
+				"my-kuzu-db": kuzudb.Config{
 					Name:              "my-kuzu-db",
 					Kind:              kuzudb.KuzuDbKind,
 					Database:          "/path/to/database.db",

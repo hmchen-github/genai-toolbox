@@ -56,7 +56,7 @@ type compatibleSource interface {
 }
 
 // validate compatible sources are still compatible
-var _ compatibleSource = &kuzudb.KuzuDbSource{}
+var _ compatibleSource = &kuzudb.Source{}
 var compatibleSources = [...]string{kuzudb.KuzuDbKind}
 
 // Initialize implements tools.ToolConfig.

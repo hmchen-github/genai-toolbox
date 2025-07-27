@@ -33,14 +33,14 @@ func init() {
 }
 
 func newConfig(ctx context.Context, name string, decoder *yaml.Decoder) (sources.SourceConfig, error) {
-	actual := KuzuDbConfig{Name: name}
+	actual := Config{Name: name}
 	if err := decoder.DecodeContext(ctx, &actual); err != nil {
 		return nil, err
 	}
 	return actual, nil
 }
 
-type KuzuDbConfig struct {
+type Config struct {
 	Name              string `yaml:"name" validate:"required" `
 	Kind              string `yaml:"kind" validate:"required"`
 	Database          string `yaml:"database"`
@@ -51,44 +51,44 @@ type KuzuDbConfig struct {
 	MaxDbSize         uint64 `yaml:"maxDbSize"`
 }
 
-func (c KuzuDbConfig) SourceConfigKind() string {
+func (cfg Config) SourceConfigKind() string {
 	return KuzuDbKind
 }
 
-func (c KuzuDbConfig) Initialize(ctx context.Context, tracer trace.Tracer) (sources.Source, error) {
-	conn, err := initKuzuDbConnection(ctx, tracer, c)
+func (cfg Config) Initialize(ctx context.Context, tracer trace.Tracer) (sources.Source, error) {
+	conn, err := initKuzuDbConnection(ctx, tracer, cfg)
 	if err != nil {
 		return nil, fmt.Errorf("unable to open a database connection: %w", err)
 	}
 
-	source := &KuzuDbSource{
-		Name:       c.Name,
+	source := &Source{
+		Name:       cfg.Name,
 		Kind:       KuzuDbKind,
 		Connection: conn,
 	}
 	return source, nil
 }
 
-var _ sources.SourceConfig = KuzuDbConfig{}
+var _ sources.SourceConfig = Config{}
 
-type KuzuDbSource struct {
+type Source struct {
 	Name       string `yaml:"name"`
 	Kind       string `yaml:"kind"`
 	Connection *kuzu.Connection
 }
 
 // SourceKind implements sources.Source.
-func (k *KuzuDbSource) SourceKind() string {
+func (s *Source) SourceKind() string {
 	return KuzuDbKind
 }
 
-func (k *KuzuDbSource) KuzuDB() *kuzu.Connection {
-	return k.Connection
+func (s *Source) KuzuDB() *kuzu.Connection {
+	return s.Connection
 }
 
-var _ sources.Source = &KuzuDbSource{}
+var _ sources.Source = &Source{}
 
-func initKuzuDbConnection(ctx context.Context, tracer trace.Tracer, config KuzuDbConfig) (*kuzu.Connection, error) {
+func initKuzuDbConnection(ctx context.Context, tracer trace.Tracer, config Config) (*kuzu.Connection, error) {
 	//nolint:all // Reassigned ctx
 	ctx, span := sources.InitConnectionSpan(ctx, tracer, KuzuDbKind, config.Name)
 	defer span.End()
