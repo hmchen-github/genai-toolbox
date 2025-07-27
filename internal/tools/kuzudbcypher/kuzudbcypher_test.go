@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package kuzudb_test
+package kuzudbcypher_test
 
 import (
 	"testing"
@@ -22,7 +22,7 @@ import (
 	"github.com/googleapis/genai-toolbox/internal/server"
 	"github.com/googleapis/genai-toolbox/internal/testutils"
 	"github.com/googleapis/genai-toolbox/internal/tools"
-	"github.com/googleapis/genai-toolbox/internal/tools/kuzudb"
+	"github.com/googleapis/genai-toolbox/internal/tools/kuzudbcypher"
 )
 
 func TestParseFromYamlKuzuDB(t *testing.T) {
@@ -59,7 +59,7 @@ func TestParseFromYamlKuzuDB(t *testing.T) {
 							  field: user_id
 			`,
 			want: server.ToolConfigs{
-				"example_tool": kuzudb.KuzuDBToolConfig{
+				"example_tool": kuzudbcypher.Config{
 					Name:         "example_tool",
 					Kind:         "kuzudb-cypher",
 					Source:       "my-kuzudb-instance",

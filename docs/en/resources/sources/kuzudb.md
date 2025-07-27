@@ -22,6 +22,12 @@ KuzuDB has the following core features:
 - **Multi-Core Query Parallelism**: Leverages multiple cores for faster query execution.
 - **Serializable ACID Transactions**: Ensures data consistency and reliability with full ACID compliance.
 
+
+## Available Tools
+
+- [`kuzu-cypher`](../tools/kuzudb/kuzudb-cypher.md)  
+  Execute pre-defined Cypher queries with placeholder parameters.
+
 ## Requirements
 
 ### Database File

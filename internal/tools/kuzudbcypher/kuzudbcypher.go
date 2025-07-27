@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package kuzudb
+package kuzudbcypher
 
 import (
 	"context"
@@ -34,14 +34,14 @@ func init() {
 }
 
 func newConfig(ctx context.Context, name string, decoder *yaml.Decoder) (tools.ToolConfig, error) {
-	actual := KuzuDBToolConfig{Name: name}
+	actual := Config{Name: name}
 	if err := decoder.DecodeContext(ctx, &actual); err != nil {
 		return nil, err
 	}
 	return actual, nil
 }
 
-type KuzuDBToolConfig struct {
+type Config struct {
 	Name         string           `yaml:"name" validate:"required"`
 	Kind         string           `yaml:"kind" validate:"required"`
 	Source       string           `yaml:"source" validate:"required"`
@@ -60,10 +60,10 @@ var _ compatibleSource = &kuzudb.KuzuDbSource{}
 var compatibleSources = [...]string{kuzudb.KuzuDbKind}
 
 // Initialize implements tools.ToolConfig.
-func (k KuzuDBToolConfig) Initialize(srcs map[string]sources.Source) (tools.Tool, error) {
-	rawS, ok := srcs[k.Source]
+func (cfg Config) Initialize(srcs map[string]sources.Source) (tools.Tool, error) {
+	rawS, ok := srcs[cfg.Source]
 	if !ok {
-		return nil, fmt.Errorf("no source named %q configured", k.Source)
+		return nil, fmt.Errorf("no source named %q configured", cfg.Source)
 	}
 
 	// verify the source is compatible
@@ -73,33 +73,33 @@ func (k KuzuDBToolConfig) Initialize(srcs map[string]sources.Source) (tools.Tool
 	}
 
 	mcpManifest := tools.McpManifest{
-		Name:        k.Name,
-		Description: k.Description,
-		InputSchema: k.Parameters.McpManifest(),
+		Name:        cfg.Name,
+		Description: cfg.Description,
+		InputSchema: cfg.Parameters.McpManifest(),
 	}
 
 	// finish tool setup
-	t := KuzuDBTool{
-		Name:         k.Name,
+	t := Tool{
+		Name:         cfg.Name,
 		Kind:         kind,
-		Parameters:   k.Parameters,
-		Statement:    k.Statement,
-		AuthRequired: k.AuthRequired,
+		Parameters:   cfg.Parameters,
+		Statement:    cfg.Statement,
+		AuthRequired: cfg.AuthRequired,
 		Connection:   s.KuzuDB(),
-		manifest:     tools.Manifest{Description: k.Description, Parameters: k.Parameters.Manifest(), AuthRequired: k.AuthRequired},
+		manifest:     tools.Manifest{Description: cfg.Description, Parameters: cfg.Parameters.Manifest(), AuthRequired: cfg.AuthRequired},
 		mcpManifest:  mcpManifest,
 	}
 	return t, nil
 }
 
 // ToolConfigKind implements tools.ToolConfig.
-func (k KuzuDBToolConfig) ToolConfigKind() string {
+func (cfg Config) ToolConfigKind() string {
 	return kind
 }
 
-var _ tools.ToolConfig = KuzuDBToolConfig{}
+var _ tools.ToolConfig = Config{}
 
-type KuzuDBTool struct {
+type Tool struct {
 	Name string `yaml:"name" validate:"required"`
 
 	Kind         string           `yaml:"kind"`
@@ -113,12 +113,12 @@ type KuzuDBTool struct {
 }
 
 // Authorized implements tools.Tool.
-func (k KuzuDBTool) Authorized(verifiedAuthServices []string) bool {
+func (k Tool) Authorized(verifiedAuthServices []string) bool {
 	return tools.IsAuthorized(k.AuthRequired, verifiedAuthServices)
 }
 
 // Invoke implements tools.Tool.
-func (k KuzuDBTool) Invoke(ctx context.Context, params tools.ParamValues) ([]any, error) {
+func (k Tool) Invoke(ctx context.Context, params tools.ParamValues) (any, error) {
 	conn := k.Connection
 	paramsMap := params.AsMap()
 
@@ -158,18 +158,18 @@ func (k KuzuDBTool) Invoke(ctx context.Context, params tools.ParamValues) ([]any
 }
 
 // Manifest implements tools.Tool.
-func (k KuzuDBTool) Manifest() tools.Manifest {
+func (k Tool) Manifest() tools.Manifest {
 	return k.manifest
 }
 
 // McpManifest implements tools.Tool.
-func (k KuzuDBTool) McpManifest() tools.McpManifest {
+func (k Tool) McpManifest() tools.McpManifest {
 	return k.mcpManifest
 }
 
 // ParseParams implements tools.Tool.
-func (k KuzuDBTool) ParseParams(data map[string]any, claimsMap map[string]map[string]any) (tools.ParamValues, error) {
+func (k Tool) ParseParams(data map[string]any, claimsMap map[string]map[string]any) (tools.ParamValues, error) {
 	return tools.ParseParams(k.Parameters, data, claimsMap)
 }
 
-var _ tools.Tool = KuzuDBTool{}
+var _ tools.Tool = Tool{}

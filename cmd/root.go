@@ -61,7 +61,7 @@ import (
 	_ "github.com/googleapis/genai-toolbox/internal/tools/firestore/firestorequerycollection"
 	_ "github.com/googleapis/genai-toolbox/internal/tools/firestore/firestorevalidaterules"
 	_ "github.com/googleapis/genai-toolbox/internal/tools/http"
-	_ "github.com/googleapis/genai-toolbox/internal/tools/kuzudb"
+	_ "github.com/googleapis/genai-toolbox/internal/tools/kuzudbcypher"
 	_ "github.com/googleapis/genai-toolbox/internal/tools/looker/lookergetdimensions"
 	_ "github.com/googleapis/genai-toolbox/internal/tools/looker/lookergetexplores"
 	_ "github.com/googleapis/genai-toolbox/internal/tools/looker/lookergetfilters"
