@@ -89,7 +89,7 @@ func TestKuzuDbToolEndpoints(t *testing.T) {
 
 	paramToolStatement, paramToolStatement2 := createParamQueries()
 	templateParamToolStmt, templateParamToolStmt2 := createTemplateQueries()
-	toolsFile := getToolConfig(paramToolStatement, paramToolStatement2, templateParamToolStmt, templateParamToolStmt2)
+	toolsFile := getToolConfig(paramToolStatement, paramToolStatement2, paramToolStatement, templateParamToolStmt, templateParamToolStmt2)
 	cmd, cleanup, err := tests.StartCmd(ctx, toolsFile, args...)
 	if err != nil {
 		t.Fatalf("command initialization returned an error: %s", err)
@@ -104,6 +104,7 @@ func TestKuzuDbToolEndpoints(t *testing.T) {
 	}
 	tests.RunToolGetTest(t)
 	runToolInvokeTest(t)
+	tests.RunMCPToolCallMethod(t, "mcpInvokeParamWant", "failInvocationWant")
 	runToolInvokeWithTemplateParameters(t, "user")
 }
 
@@ -118,7 +119,7 @@ func createTemplateQueries() (string, string) {
 	return toolStatement, toolStatement2
 }
 
-func getToolConfig(paramToolStatement, paramToolStatement2, templateParamToolStmt, templateParamToolStmt2 string) map[string]any {
+func getToolConfig(paramToolStatement, paramToolStatement2, authToolStatement, templateParamToolStmt, templateParamToolStmt2 string) map[string]any {
 	// Write config into a file and pass it to command
 	toolsFile := map[string]any{
 		"sources": map[string]any{
@@ -163,6 +164,35 @@ func getToolConfig(paramToolStatement, paramToolStatement2, templateParamToolStm
 				"description": "Tool to test statement with incorrect syntax.",
 				"statement":   "SELEC 1;",
 			},
+			"my-auth-tool": map[string]any{
+				"kind":        toolKind,
+				"source":      "my-instance",
+				"description": "Tool to test authenticated parameters.",
+				// statement to auto-fill authenticated parameter
+				"statement": authToolStatement,
+				"parameters": []map[string]any{
+					{
+						"name":        "name",
+						"type":        "string",
+						"description": "user name",
+						"authServices": []map[string]string{
+							{
+								"name":  "my-google-auth",
+								"field": "name",
+							},
+						},
+					},
+				},
+			},
+			"my-auth-required-tool": map[string]any{
+				"kind":        toolKind,
+				"source":      "my-instance",
+				"description": "Tool to test auth required invocation.",
+				"statement":   "MATCH (a) return a;",
+				"authRequired": []string{
+					"my-google-auth",
+				},
+			},
 			"select-fields-templateParams-tool": map[string]any{
 				"kind":        toolKind,
 				"source":      "my-instance",
@@ -203,6 +233,10 @@ func getToolConfig(paramToolStatement, paramToolStatement2, templateParamToolStm
 }
 
 func runToolInvokeTest(t *testing.T) {
+	idToken, err := tests.GetGoogleIdToken(tests.ClientId)
+	if err != nil {
+		t.Fatalf("error getting Google ID token: %s", err)
+	}
 	// Test tool invoke endpoint
 	invokeTcs := []struct {
 		name          string
@@ -247,6 +281,28 @@ func runToolInvokeTest(t *testing.T) {
 		{
 			name:          "Invoke my-param-tool without parameters",
 			api:           "http://127.0.0.1:5000/api/tool/my-param-tool/invoke",
+			requestHeader: map[string]string{},
+			requestBody:   bytes.NewBuffer([]byte(`{}`)),
+			isErr:         true,
+		},
+		{
+			name:          "Invoke my-auth-tool with auth token",
+			api:           "http://127.0.0.1:5000/api/tool/my-auth-tool/invoke",
+			requestHeader: map[string]string{"my-google-auth_token": idToken},
+			requestBody:   bytes.NewBuffer([]byte(`{}`)),
+			want:          "[{\"name\":\"Alice\"}]",
+			isErr:         false,
+		},
+		{
+			name:          "Invoke my-auth-tool with invalid auth token",
+			api:           "http://127.0.0.1:5000/api/tool/my-auth-tool/invoke",
+			requestHeader: map[string]string{"my-google-auth_token": "INVALID_TOKEN"},
+			requestBody:   bytes.NewBuffer([]byte(`{}`)),
+			isErr:         true,
+		},
+		{
+			name:          "Invoke my-auth-tool without auth token",
+			api:           "http://127.0.0.1:5000/api/tool/my-auth-tool/invoke",
 			requestHeader: map[string]string{},
 			requestBody:   bytes.NewBuffer([]byte(`{}`)),
 			isErr:         true,
