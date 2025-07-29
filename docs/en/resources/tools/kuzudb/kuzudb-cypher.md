@@ -17,7 +17,7 @@ A `kuzudb-cypher` tool executes a pre-defined Cypher statement against a KuzuDB 
 
 The specified Cypher statement is executed as a [parameterized statement][kuzudb-parameters], with parameters referenced by their name (e.g., `$id`). This approach ensures security by preventing Cypher injection attacks.
 
-> **Note:** This tool uses parameterized queries to prevent SQL injections. \
+> **Note:** This tool uses parameterized queries to prevent Cypher injections. \
 > Query parameters can be used as substitutes for arbitrary expressions but cannot replace identifiers, node labels, relationship types, or other structural parts of the query.
 
 [kuzudb-parameters]:
@@ -60,6 +60,42 @@ tools:
         type: integer
         description: Minimum age as a positive integer
 ```
+### Example with Template Parameters
+
+> **Note:** This tool allows direct modifications to the Cypher statement,
+> including identifiers, column names, and table names. **This makes it more
+> vulnerable to Cypher injections**. Using basic parameters only (see above) is
+> recommended for performance and safety reasons. For more details, please check
+> [templateParameters](../_index#template-parameters).
+
+```yaml
+tools:
+  find_friends:
+    kind: kuzudb-cypher
+    source: my-kuzu-social-network
+    statement: |
+      MATCH (p1:{{.nodeLabel}})-[:friends_with]->(p2:{{.nodeLabel}})
+      WHERE p1.name = $name
+      RETURN p2.name
+      LIMIT 5
+    description: |
+      Use this tool to find friends of a specific person in a social network.
+      Takes a node label (e.g., "Person") and a full person name (e.g., "Alice Smith") and returns a list of friend names.
+      Do NOT use with incomplete names. A person name is a full name with first and last name separated by a space.
+      Example:
+      {
+        "nodeLabel": "Person",
+        "name": "Bob Johnson"
+      }
+    templateParameters:
+      - name: nodeLabel
+        type: string
+        description: Node label for the table to query, e.g., "Person"
+    parameters:
+      - name: name
+        type: string
+        description: Full person name, "firstname lastname"
+```
 
 ## Reference
 
@@ -71,3 +107,4 @@ tools:
 | statement            | string                                | true         | Cypher statement to execute.                                                   |
 | authRequired         | []string                              | false        | List of authentication requirements for executing the query (if applicable).    |
 | parameters           | [parameters](../_index#specifying-parameters) | false    | List of parameters used with the Cypher statement.                              |
+| templateParameters | [templateParameters](../_index#template-parameters) |    false     | List of [templateParameters](../_index#template-parameters) that will be inserted into the Cypher statement before executing prepared statement. |
