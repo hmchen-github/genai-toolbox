@@ -13,7 +13,7 @@ aliases:
 
 A `kuzudb-cypher` tool executes a pre-defined Cypher statement against a KuzuDB graph database. It is designed to work with KuzuDB's embedded graph database, optimized for high query speed and scalability. The tool is compatible with the following sources:
 
-- [kuzudb](../sources/kuzudb.md)
+- [kuzudb](../../sources/kuzudb.md)
 
 The specified Cypher statement is executed as a [parameterized statement][kuzudb-parameters], with parameters referenced by their name (e.g., `$id`). This approach ensures security by preventing Cypher injection attacks.
 
@@ -70,4 +70,4 @@ tools:
 | description          | string                                | true         | Description of the tool that is passed to the LLM for context.                  |
 | statement            | string                                | true         | Cypher statement to execute.                                                   |
 | authRequired         | []string                              | false        | List of authentication requirements for executing the query (if applicable).    |
-| parameters           | [parameters](_index#specifying-parameters) | false    | List of parameters used with the Cypher statement.                              |
+| parameters           | [parameters](../_index#specifying-parameters) | false    | List of parameters used with the Cypher statement.                              |
