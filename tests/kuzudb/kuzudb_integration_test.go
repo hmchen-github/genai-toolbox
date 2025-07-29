@@ -28,6 +28,7 @@ import (
 	"time"
 
 	"github.com/googleapis/genai-toolbox/internal/testutils"
+	"github.com/googleapis/genai-toolbox/internal/tools"
 	"github.com/googleapis/genai-toolbox/tests"
 	"github.com/kuzudb/go-kuzu"
 )
@@ -87,7 +88,8 @@ func TestKuzuDbToolEndpoints(t *testing.T) {
 	var args []string
 
 	paramToolStatement, paramToolStatement2 := createParamQueries()
-	toolsFile := getToolConfig(paramToolStatement, paramToolStatement2)
+	templateParamToolStmt, templateParamToolStmt2 := createTemplateQueries()
+	toolsFile := getToolConfig(paramToolStatement, paramToolStatement2, templateParamToolStmt, templateParamToolStmt2)
 	cmd, cleanup, err := tests.StartCmd(ctx, toolsFile, args...)
 	if err != nil {
 		t.Fatalf("command initialization returned an error: %s", err)
@@ -102,6 +104,7 @@ func TestKuzuDbToolEndpoints(t *testing.T) {
 	}
 	tests.RunToolGetTest(t)
 	runToolInvokeTest(t)
+	runToolInvokeWithTemplateParameters(t, "user")
 }
 
 func createParamQueries() (string, string) {
@@ -109,8 +112,13 @@ func createParamQueries() (string, string) {
 	toolStatement2 := "match (a:user)-[:follows {since:$year}]->(b:user) return a.name, b.name"
 	return toolStatement, toolStatement2
 }
+func createTemplateQueries() (string, string) {
+	toolStatement := "match (u:{{.tableName}} {name:$name}) return u.*"
+	toolStatement2 := "match (a:{{.tableName}})-[:follows { {{.edgeFilter}} :$year}]->(b:user) return a.name, b.name"
+	return toolStatement, toolStatement2
+}
 
-func getToolConfig(paramToolStatement, paramToolStatement2 string) map[string]any {
+func getToolConfig(paramToolStatement, paramToolStatement2, templateParamToolStmt, templateParamToolStmt2 string) map[string]any {
 	// Write config into a file and pass it to command
 	toolsFile := map[string]any{
 		"sources": map[string]any{
@@ -154,6 +162,39 @@ func getToolConfig(paramToolStatement, paramToolStatement2 string) map[string]an
 				"source":      "my-instance",
 				"description": "Tool to test statement with incorrect syntax.",
 				"statement":   "SELEC 1;",
+			},
+			"select-fields-templateParams-tool": map[string]any{
+				"kind":        toolKind,
+				"source":      "my-instance",
+				"description": "Tool to test invocation with template params.",
+				"statement":   templateParamToolStmt,
+				"parameters": []any{
+					map[string]any{
+						"name":        "name",
+						"type":        "string",
+						"description": "user name",
+					},
+				},
+				"templateParameters": []tools.Parameter{
+					tools.NewStringParameter("tableName", "some description"),
+				},
+			},
+			"select-filter-templateParams-tool": map[string]any{
+				"kind":        toolKind,
+				"source":      "my-instance",
+				"description": "Tool to test invocation with template param filter.",
+				"statement":   templateParamToolStmt2,
+				"parameters": []any{
+					map[string]any{
+						"name":        "year",
+						"type":        "integer",
+						"description": "year since when one user follows the other user",
+					},
+				},
+				"templateParameters": []tools.Parameter{
+					tools.NewStringParameter("tableName", "some description"),
+					tools.NewStringParameter("edgeFilter", "some description"),
+				},
 			},
 		},
 	}
@@ -251,6 +292,85 @@ func runToolInvokeTest(t *testing.T) {
 			if got != tc.want {
 				t.Fatalf("unexpected value: got %q, want %q", got, tc.want)
 			}
+		})
+	}
+}
+
+func runToolInvokeWithTemplateParameters(t *testing.T, tableName string) {
+
+	// Test tool invoke endpoint
+	invokeTcs := []struct {
+		name          string
+		ddl           bool
+		insert        bool
+		api           string
+		requestHeader map[string]string
+		requestBody   io.Reader
+		want          string
+		isErr         bool
+	}{
+		{
+			name:          "invoke select-fields-templateParams-tool",
+			ddl:           true,
+			api:           "http://127.0.0.1:5000/api/tool/select-fields-templateParams-tool/invoke",
+			requestHeader: map[string]string{},
+			requestBody:   bytes.NewBuffer([]byte(fmt.Sprintf(`{"tableName": "%s", "name": "Alice"}`, tableName))),
+			want:          "[{\"u.age\":20,\"u.name\":\"Alice\"}]",
+			isErr:         false,
+		},
+		{
+			name:          "invoke select-filter-templateParams-tool",
+			insert:        true,
+			api:           "http://127.0.0.1:5000/api/tool/select-filter-templateParams-tool/invoke",
+			requestHeader: map[string]string{},
+			requestBody:   bytes.NewBuffer([]byte(fmt.Sprintf(`{"tableName": "%s", "edgeFilter": "since", "year":2019}`, tableName))),
+			want:          "[{\"a.name\":\"Alice\",\"b.name\":\"Jane\"}]",
+			isErr:         false,
+		},
+	}
+	for _, tc := range invokeTcs {
+		t.Run(tc.name, func(t *testing.T) {
+
+			// Send Tool invocation request
+			req, err := http.NewRequest(http.MethodPost, tc.api, tc.requestBody)
+			if err != nil {
+				t.Fatalf("unable to create request: %s", err)
+			}
+			req.Header.Add("Content-type", "application/json")
+			for k, v := range tc.requestHeader {
+				req.Header.Add(k, v)
+			}
+
+			resp, err := http.DefaultClient.Do(req)
+			if err != nil {
+				t.Fatalf("unable to send request: %s", err)
+			}
+			defer resp.Body.Close()
+
+			if resp.StatusCode != http.StatusOK {
+				if tc.isErr {
+					return
+				}
+				bodyBytes, _ := io.ReadAll(resp.Body)
+				t.Fatalf("response status code is not 200, got %d: %s", resp.StatusCode, string(bodyBytes))
+			}
+
+			// Check response body
+			var body map[string]interface{}
+			err = json.NewDecoder(resp.Body).Decode(&body)
+			if err != nil {
+				t.Fatalf("error parsing response body")
+			}
+
+			got, ok := body["result"].(string)
+			if !ok {
+				t.Fatalf("unable to find result in response body")
+			}
+
+			if got != tc.want {
+				t.Fatalf("unexpected value: got %q, want %q", got, tc.want)
+			}
+
 		})
 	}
 }

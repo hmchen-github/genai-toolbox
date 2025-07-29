@@ -42,13 +42,14 @@ func newConfig(ctx context.Context, name string, decoder *yaml.Decoder) (tools.T
 }
 
 type Config struct {
-	Name         string           `yaml:"name" validate:"required"`
-	Kind         string           `yaml:"kind" validate:"required"`
-	Source       string           `yaml:"source" validate:"required"`
-	Description  string           `yaml:"description" validate:"required"`
-	Statement    string           `yaml:"statement" validate:"required"`
-	AuthRequired []string         `yaml:"authRequired"`
-	Parameters   tools.Parameters `yaml:"parameters"`
+	Name               string           `yaml:"name" validate:"required"`
+	Kind               string           `yaml:"kind" validate:"required"`
+	Source             string           `yaml:"source" validate:"required"`
+	Description        string           `yaml:"description" validate:"required"`
+	Statement          string           `yaml:"statement" validate:"required"`
+	AuthRequired       []string         `yaml:"authRequired"`
+	Parameters         tools.Parameters `yaml:"parameters"`
+	TemplateParameters tools.Parameters `yaml:"templateParameters"`
 }
 
 type compatibleSource interface {
@@ -71,23 +72,25 @@ func (cfg Config) Initialize(srcs map[string]sources.Source) (tools.Tool, error)
 	if !ok {
 		return nil, fmt.Errorf("invalid source for %q tool: source kind must be one of %q", kind, compatibleSources)
 	}
-
+	allParameters, paramManifest, paramMcpManifest := tools.ProcessParameters(cfg.TemplateParameters, cfg.Parameters)
 	mcpManifest := tools.McpManifest{
 		Name:        cfg.Name,
 		Description: cfg.Description,
-		InputSchema: cfg.Parameters.McpManifest(),
+		InputSchema: paramMcpManifest,
 	}
 
 	// finish tool setup
 	t := Tool{
-		Name:         cfg.Name,
-		Kind:         kind,
-		Parameters:   cfg.Parameters,
-		Statement:    cfg.Statement,
-		AuthRequired: cfg.AuthRequired,
-		Connection:   s.KuzuDB(),
-		manifest:     tools.Manifest{Description: cfg.Description, Parameters: cfg.Parameters.Manifest(), AuthRequired: cfg.AuthRequired},
-		mcpManifest:  mcpManifest,
+		Name:               cfg.Name,
+		Kind:               kind,
+		Parameters:         cfg.Parameters,
+		TemplateParameters: cfg.TemplateParameters,
+		AllParams:          allParameters,
+		Statement:          cfg.Statement,
+		AuthRequired:       cfg.AuthRequired,
+		Connection:         s.KuzuDB(),
+		manifest:           tools.Manifest{Description: cfg.Description, Parameters: paramManifest, AuthRequired: cfg.AuthRequired},
+		mcpManifest:        mcpManifest,
 	}
 	return t, nil
 }
@@ -100,11 +103,12 @@ func (cfg Config) ToolConfigKind() string {
 var _ tools.ToolConfig = Config{}
 
 type Tool struct {
-	Name string `yaml:"name" validate:"required"`
-
-	Kind         string           `yaml:"kind"`
-	AuthRequired []string         `yaml:"authRequired"`
-	Parameters   tools.Parameters `yaml:"parameters"`
+	Name               string           `yaml:"name" validate:"required"`
+	Kind               string           `yaml:"kind"`
+	AuthRequired       []string         `yaml:"authRequired"`
+	Parameters         tools.Parameters `yaml:"parameters"`
+	TemplateParameters tools.Parameters `yaml:"templateParameters"`
+	AllParams          tools.Parameters `yaml:"allParams"`
 
 	Connection  *kuzu.Connection
 	Statement   string `yaml:"statement"`
@@ -113,21 +117,30 @@ type Tool struct {
 }
 
 // Authorized implements tools.Tool.
-func (k Tool) Authorized(verifiedAuthServices []string) bool {
-	return tools.IsAuthorized(k.AuthRequired, verifiedAuthServices)
+func (t Tool) Authorized(verifiedAuthServices []string) bool {
+	return tools.IsAuthorized(t.AuthRequired, verifiedAuthServices)
 }
 
 // Invoke implements tools.Tool.
-func (k Tool) Invoke(ctx context.Context, params tools.ParamValues) (any, error) {
-	conn := k.Connection
+func (t Tool) Invoke(ctx context.Context, params tools.ParamValues) (any, error) {
+	conn := t.Connection
 	paramsMap := params.AsMap()
-
-	preparedStatement, err := conn.Prepare(k.Statement)
+	newStatement, err := tools.ResolveTemplateParams(t.TemplateParameters, t.Statement, paramsMap)
+	if err != nil {
+		return nil, fmt.Errorf("unable to extract template params %w", err)
+	}
+	fmt.Printf("new statement %s\n", newStatement)
+	fmt.Printf("params %v\n", paramsMap)
+	preparedStatement, err := conn.Prepare(newStatement)
 	if err != nil {
 		return nil, fmt.Errorf("unable to generate prepared statement %w", err)
 	}
+	newParamMap, err := getParams(t.Parameters, paramsMap)
+	if err != nil {
+		return nil, fmt.Errorf("unable to extract standard params %w", err)
+	}
 
-	result, err := conn.Execute(preparedStatement, paramsMap)
+	result, err := conn.Execute(preparedStatement, newParamMap)
 	if err != nil {
 		return nil, fmt.Errorf("unable to execute query: %w", err)
 	}
@@ -154,22 +167,36 @@ func (k Tool) Invoke(ctx context.Context, params tools.ParamValues) (any, error)
 		}
 		out = append(out, rowMap)
 	}
+	fmt.Printf("result %v\n", out)
 	return out, nil
 }
 
 // Manifest implements tools.Tool.
-func (k Tool) Manifest() tools.Manifest {
-	return k.manifest
+func (t Tool) Manifest() tools.Manifest {
+	return t.manifest
 }
 
 // McpManifest implements tools.Tool.
-func (k Tool) McpManifest() tools.McpManifest {
-	return k.mcpManifest
+func (t Tool) McpManifest() tools.McpManifest {
+	return t.mcpManifest
 }
 
 // ParseParams implements tools.Tool.
-func (k Tool) ParseParams(data map[string]any, claimsMap map[string]map[string]any) (tools.ParamValues, error) {
-	return tools.ParseParams(k.Parameters, data, claimsMap)
+func (t Tool) ParseParams(data map[string]any, claimsMap map[string]map[string]any) (tools.ParamValues, error) {
+	return tools.ParseParams(t.AllParams, data, claimsMap)
 }
 
 var _ tools.Tool = Tool{}
+
+func getParams(params tools.Parameters, paramValuesMap map[string]interface{}) (map[string]interface{}, error) {
+	newParamMap := make(map[string]any)
+	for _, p := range params {
+		k := p.GetName()
+		v, ok := paramValuesMap[k]
+		if !ok {
+			return nil, fmt.Errorf("missing parameter %s", k)
+		}
+		newParamMap[k] = v
+	}
+	return newParamMap, nil
+}
