@@ -2053,7 +2053,7 @@ file.
 To view details for a specific tool, click on the tool name. The main content area will be populated
 with the tool name, description, and available parameters.
 
-![tools](tools.png)
+![tools](./tools.png)
 
 #### Excluding Parameters
 
@@ -2066,10 +2066,12 @@ For strings, an empty field gets sent as an empty string. For other required par
 will display an error message.
 
 Optional parameter included (default):
-![tools](/optional-param-checked.png)
+
+![tools](./optional-param-checked.png)
 
 Optional parameter excluded (will not be sent in request body):
-![tools](./use-toolbox-ui/optional-param-unchecked.png)
+
+![tools](./optional-param-unchecked.png)
 
 #### Running Tools
 

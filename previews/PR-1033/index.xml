@@ -1549,7 +1549,7 @@ DDL statements.&lt;/p>
 &lt;p>&lt;strong>Note:&lt;/strong> This tool uses parameterized queries to prevent SQL injections.
 Query parameters can be used as substitutes for arbitrary expressions.
 Parameters cannot be used as substitutes for identifiers, column names, table
-names, or other parts of the query.&lt;/p></description></item><item><title>Use Toolbox UI</title><link>https://googleapis.github.io/genai-toolbox/previews/PR-1033/how-to/use-toolbox-ui/use_toolbox_ui/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googleapis.github.io/genai-toolbox/previews/PR-1033/how-to/use-toolbox-ui/use_toolbox_ui/</guid><description>&lt;h2 id="toolbox-ui">Toolbox UI&lt;/h2>
+names, or other parts of the query.&lt;/p></description></item><item><title>Use Toolbox UI</title><link>https://googleapis.github.io/genai-toolbox/previews/PR-1033/how-to/use-toolbox-ui/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googleapis.github.io/genai-toolbox/previews/PR-1033/how-to/use-toolbox-ui/</guid><description>&lt;h2 id="toolbox-ui">Toolbox UI&lt;/h2>
 &lt;p>Toolbox includes a built-in web interface that allows users to test out tools
 and toolsets, which can help to speed up development.&lt;/p>
 &lt;h3 id="launching-toolbox-ui">Launching Toolbox UI&lt;/h3>
