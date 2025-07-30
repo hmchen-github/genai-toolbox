@@ -2043,7 +2043,7 @@ To launch Toolbox's interactive UI, use the `--ui` flag.
 ```
 
 Toolbox UI will be served from the same port as the Toolbox server, with the `/ui` suffix. On the default
-port 5000, Toolbox UI will be accessible via navigating to localhost:5000/ui on a browser.
+port 5000, Toolbox UI will be accessible via navigating to [localhost:5000/ui](https://localhost:5000/ui) on a browser.
 
 ### Navigating the Tools Page
 
@@ -2053,7 +2053,7 @@ file.
 To view details for a specific tool, click on the tool name. The main content area will be populated
 with the tool name, description, and available parameters.
 
-![tools](./docs/en/how-to/use-toolbox-ui/tools.png)
+![tools](./tools.png)
 
 #### Excluding Parameters
 
@@ -2066,10 +2066,10 @@ For strings, an empty field gets sent as an empty string. For other required par
 will display an error message.
 
 Optional parameter included (default):
-![tools](./docs/en/how-to/use-toolbox-ui/optional-param-checked.png)
+![tools](./optional-param-checked.png)
 
 Optional parameter excluded (will not be sent in request body):
-![tools](./docs/en/how-to/use-toolbox-ui/optional-param-unchecked.png)
+![tools](./optional-param-unchecked.png)
 
 #### Running Tools
 
@@ -2083,7 +2083,7 @@ enter the toolset name in the search bar, and press enter to retrieve the associ
 If the toolset name is not defined within the tools configuration file, an error message will be 
 displayed.
 
-![tools](./docs/en/how-to/use-toolbox-ui/toolsets.png)
+![tools](./toolsets.png)
 
 ### Editing Headers
 
@@ -2094,7 +2094,7 @@ Toolbox UI validates that the headers are in correct JSON format. Other header-r
 incorrect header names or values required by the tool) will be reported in the Response section 
 after running the tool.
 
-![tools](./docs/en/how-to/use-toolbox-ui/edit-headers.png)
+![tools](./edit-headers.png)
 
 #### Google OAuth
 

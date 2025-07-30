@@ -1556,7 +1556,7 @@ and toolsets, which can help to speed up development.&lt;/p>
 &lt;p>To launch Toolbox&amp;rsquo;s interactive UI, use the &lt;code>--ui&lt;/code> flag.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-sh" data-lang="sh">&lt;span class="line">&lt;span class="cl">./toolbox --ui
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Toolbox UI will be served from the same port as the Toolbox server, with the &lt;code>/ui&lt;/code> suffix. On the default
-port 5000, Toolbox UI will be accessible via navigating to localhost:5000/ui on a browser.&lt;/p></description></item><item><title>valkey</title><link>https://googleapis.github.io/genai-toolbox/previews/PR-1033/resources/tools/valkey/valkey/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googleapis.github.io/genai-toolbox/previews/PR-1033/resources/tools/valkey/valkey/</guid><description>&lt;h2 id="about">About&lt;/h2>
+port 5000, Toolbox UI will be accessible via navigating to &lt;a href="https://localhost:5000/ui">localhost:5000/ui&lt;/a> on a browser.&lt;/p></description></item><item><title>valkey</title><link>https://googleapis.github.io/genai-toolbox/previews/PR-1033/resources/tools/valkey/valkey/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://googleapis.github.io/genai-toolbox/previews/PR-1033/resources/tools/valkey/valkey/</guid><description>&lt;h2 id="about">About&lt;/h2>
 &lt;p>A valkey tool executes a series of pre-defined Valkey commands against a
 Memorystore for Valkey instance.&lt;/p>
 &lt;p>The specified Valkey commands are executed sequentially. Each command is
