@@ -2053,7 +2053,7 @@ file.
 To view details for a specific tool, click on the tool name. The main content area will be populated
 with the tool name, description, and available parameters.
 
-![tools](./tools.png)
+![Tools Page](./tools.png)
 
 #### Excluding Parameters
 
@@ -2067,11 +2067,11 @@ will display an error message.
 
 Optional parameter included (default):
 
-![tools](./optional-param-checked.png)
+![Optional Parameter checked example](./optional-param-checked.png)
 
 Optional parameter excluded (will not be sent in request body):
 
-![tools](./optional-param-unchecked.png)
+![Optional Parameter unchecked example](./optional-param-unchecked.png)
 
 #### Running Tools
 
@@ -2080,12 +2080,12 @@ To run a tool, press the "Run Tool" button. The UI will send the configured requ
 ### Navigating the Toolsets Page
 
 Through the toolsets page, users can search for a specific toolset to retrieve tools from. Simply
-enter the toolset name in the search bar, and press enter to retrieve the associated tools.
+enter the toolset name in the search bar, and press "Enter" to retrieve the associated tools.
 
 If the toolset name is not defined within the tools configuration file, an error message will be 
 displayed.
 
-![tools](./toolsets.png)
+![Toolsets Page](./toolsets.png)
 
 ### Editing Headers
 
@@ -2096,7 +2096,7 @@ Toolbox UI validates that the headers are in correct JSON format. Other header-r
 incorrect header names or values required by the tool) will be reported in the Response section 
 after running the tool.
 
-![tools](./edit-headers.png)
+![Edit Headers](./edit-headers.png)
 
 #### Google OAuth
 
@@ -2104,9 +2104,9 @@ Currently, Toolbox supports Google OAuth 2.0 as an AuthService, which allows too
 authorized parameters. When a tool uses an authorized parameter, the parameter will be displayed
 but not editable, as it will be populated from the authentication token.  
 
-To provide the token, add your Google OAuth ID Token to the header. The key should be
-the name of your AuthService as defined in your tool configuration file, suffixed with `_token`.
-The value should be your ID token as a string.
+To provide the token, add your Google OAuth ID Token to the request header using the "Edit Headers"
+button and modal described above. The key should be the name of your AuthService as defined in 
+your tool configuration file, suffixed with `_token`. The value should be your ID token as a string.
 
 ```json
 {
