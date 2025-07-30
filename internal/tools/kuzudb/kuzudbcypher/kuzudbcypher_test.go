@@ -22,7 +22,7 @@ import (
 	"github.com/googleapis/genai-toolbox/internal/server"
 	"github.com/googleapis/genai-toolbox/internal/testutils"
 	"github.com/googleapis/genai-toolbox/internal/tools"
-	"github.com/googleapis/genai-toolbox/internal/tools/kuzudbcypher"
+	"github.com/googleapis/genai-toolbox/internal/tools/kuzudb/kuzudbcypher"
 )
 
 func TestParseFromYamlKuzuDB(t *testing.T) {

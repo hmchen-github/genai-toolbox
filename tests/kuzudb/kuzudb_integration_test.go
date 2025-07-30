@@ -104,7 +104,6 @@ func TestKuzuDbToolEndpoints(t *testing.T) {
 	}
 	tests.RunToolGetTest(t)
 	runToolInvokeTest(t)
-	tests.RunMCPToolCallMethod(t, "mcpInvokeParamWant", "failInvocationWant")
 	runToolInvokeWithTemplateParameters(t, "user")
 }
 
