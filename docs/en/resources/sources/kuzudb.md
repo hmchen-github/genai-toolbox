@@ -1,6 +1,5 @@
 ---
 title: "KùzuDB"
-linkTitle: "KùzuDB"
 type: docs
 weight: 1
 description: > 
@@ -25,7 +24,7 @@ KuzuDB has the following core features:
 
 ## Available Tools
 
-- [`kuzu-cypher`](../tools/kuzudb/kuzudb-cypher.md)  
+- [`kuzudb-cypher`](../tools/kuzudb/kuzudb-cypher.md)  
   Execute pre-defined Cypher queries with placeholder parameters.
 
 ## Requirements
