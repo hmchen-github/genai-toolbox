@@ -49,12 +49,12 @@ func getSourceConfig() map[string]any {
 }
 func initKuzuDbConnection() error {
 	queries := []string{
-		"create node table user(name string primary key, age int64)",
+		"create node table user(name string primary key, age int64, email string)",
 		"create node table city(name string primary key, population int64)",
 		"create rel table follows(from user to user, since int64)",
 		"create rel table livesin(from user to city)",
-		"create (u:user {name:'Alice', age:20})",
-		"create (u:user {name:'Jane', age:30})",
+		fmt.Sprintf("create (u:user {name:'Alice', age:20, email: %q})", tests.ServiceAccountEmail),
+		"create (u:user {name:'Jane', age:30, email: 'janedoe@gmail.com'})",
 		"create (u:city {name:'London', population:100})",
 		"create (u:city {name:'New York', population:200})",
 		"match (u1:user), (u2:user) where u1.name='Alice' and u2.name='Jane' create (u1)-[:follows {since: 2019}]->(u2)",
@@ -87,9 +87,9 @@ func TestKuzuDbToolEndpoints(t *testing.T) {
 	defer cancel()
 	var args []string
 
-	paramToolStatement, paramToolStatement2 := createParamQueries()
+	paramToolStatement, paramToolStatement2, authToolStatement := createParamQueries()
 	templateParamToolStmt, templateParamToolStmt2 := createTemplateQueries()
-	toolsFile := getToolConfig(paramToolStatement, paramToolStatement2, paramToolStatement, templateParamToolStmt, templateParamToolStmt2)
+	toolsFile := getToolConfig(paramToolStatement, paramToolStatement2, authToolStatement, templateParamToolStmt, templateParamToolStmt2)
 	cmd, cleanup, err := tests.StartCmd(ctx, toolsFile, args...)
 	if err != nil {
 		t.Fatalf("command initialization returned an error: %s", err)
@@ -107,13 +107,14 @@ func TestKuzuDbToolEndpoints(t *testing.T) {
 	runToolInvokeWithTemplateParameters(t, "user")
 }
 
-func createParamQueries() (string, string) {
-	toolStatement := "match (u:user {name:$name}) return u.*"
+func createParamQueries() (string, string, string) {
+	toolStatement := "match (u:user {name:$name}) return u.age, u.name"
 	toolStatement2 := "match (a:user)-[:follows {since:$year}]->(b:user) return a.name, b.name"
-	return toolStatement, toolStatement2
+	authToolStatement := "match (u:user {name:$email}) return u.age, u.name"
+	return toolStatement, toolStatement2, authToolStatement
 }
 func createTemplateQueries() (string, string) {
-	toolStatement := "match (u:{{.tableName}} {name:$name}) return u.*"
+	toolStatement := "match (u:{{.tableName}} {name:$name}) return u.age, u.name"
 	toolStatement2 := "match (a:{{.tableName}})-[:follows { {{.edgeFilter}} :$year}]->(b:user) return a.name, b.name"
 	return toolStatement, toolStatement2
 }
@@ -123,6 +124,12 @@ func getToolConfig(paramToolStatement, paramToolStatement2, authToolStatement, t
 	toolsFile := map[string]any{
 		"sources": map[string]any{
 			"my-instance": getSourceConfig(),
+		},
+		"authServices": map[string]any{
+			"my-google-auth": map[string]any{
+				"kind":     "google",
+				"clientId": tests.ClientId,
+			},
 		},
 		"tools": map[string]any{
 			"my-simple-tool": map[string]any{
@@ -171,13 +178,13 @@ func getToolConfig(paramToolStatement, paramToolStatement2, authToolStatement, t
 				"statement": authToolStatement,
 				"parameters": []map[string]any{
 					{
-						"name":        "name",
+						"name":        "email",
 						"type":        "string",
-						"description": "user name",
+						"description": "user email",
 						"authServices": []map[string]string{
 							{
 								"name":  "my-google-auth",
-								"field": "name",
+								"field": "email",
 							},
 						},
 					},
@@ -232,10 +239,7 @@ func getToolConfig(paramToolStatement, paramToolStatement2, authToolStatement, t
 }
 
 func runToolInvokeTest(t *testing.T) {
-	idToken, err := tests.GetGoogleIdToken(tests.ClientId)
-	if err != nil {
-		t.Fatalf("error getting Google ID token: %s", err)
-	}
+	idToken := "client-id"
 	// Test tool invoke endpoint
 	invokeTcs := []struct {
 		name          string
