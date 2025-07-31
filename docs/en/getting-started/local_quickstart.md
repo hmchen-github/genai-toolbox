@@ -37,6 +37,7 @@ local development:
 [install-venv]: https://packaging.python.org/en/latest/tutorials/installing-packages/#creating-virtual-environments
 [install-postgres]: https://www.postgresql.org/download/
 
+<!-- [START database_setup] -->
 ## Step 1: Set up your database
 
 In this section, we will create a database, insert some data that needs to be
@@ -155,7 +156,10 @@ postgres` and a password next time.
     ```bash
     \q
     ```
+<!-- [END database_setup] -->
 
+
+<!-- [START configure_toolbox] -->
 ## Step 2: Install and configure Toolbox
 
 In this section, we will download Toolbox, configure our tools in a
@@ -277,6 +281,8 @@ In this section, we will download Toolbox, configure our tools in a
     Toolbox enables dynamic reloading by default. To disable, use the
     `--disable-reload` flag.
     {{< /notice >}}
+
+<!-- [END configure_toolbox] -->
 
 ## Step 3: Connect your agent to Toolbox
 
