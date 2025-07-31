@@ -13,29 +13,14 @@ This guide assumes you have already done the following:
 1. Installed [Node.js (v18 or higher)].
 1. Installed [PostgreSQL 16+ and the `psql` client][install-postgres].
 
-### Cloud Setup (Optional)
-
-If you plan to use **Google Cloud’s Vertex AI** with your agent (e.g., using
-Gemini or PaLM models), follow these one-time setup steps:
-
-1. [Install the Google Cloud CLI]
-1. [Set up Application Default Credentials (ADC)]
-1. Set your project and enable Vertex AI
-
-    ```bash
-    gcloud config set project YOUR_PROJECT_ID
-    gcloud services enable aiplatform.googleapis.com
-    ```
-
 [Node.js (v18 or higher)]: https://nodejs.org/
 [install-postgres]: https://www.postgresql.org/download/
-[Install the Google Cloud CLI]: https://cloud.google.com/sdk/docs/install
-[Set up Application Default Credentials (ADC)]:
-    https://cloud.google.com/docs/authentication/set-up-adc-local-dev-environment
 
-{{< includeregion "local_quickstart.md" "database_setup" >}}
+{{< mdRegionInclude "local_quickstart.md" "cloud_setup" >}}
 
-{{< includeregion "local_quickstart.md" "configure_toolbox" >}}
+{{< mdRegionInclude "local_quickstart.md" "database_setup" >}}
+
+{{< mdRegionInclude "local_quickstart.md" "configure_toolbox" >}}
 
 ## Step 3: Connect your agent to Toolbox
 
