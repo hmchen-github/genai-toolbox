@@ -4840,6 +4840,8 @@ with the tool name, description, and available parameters.
 4. Done! Your results will appear in the response field
 5. Uncheck "Prettify JSON" to format the response as plain text
 
+![Run Tool Demo GIF](./run-tool.gif)
+
 ### Optional Parameters
 
 Toolbox allows users to add [optional parameters](../../resources/tools/#basic-parameters) with or without a default value. 
@@ -4849,11 +4851,7 @@ included in the request body. If the parameter is not sent, Toolbox will either 
 
 When the box is checked, parameter will be sent exactly as entered in the response field (e.g. empty string).
 
-Optional parameter included (default):
-
 ![Optional Parameter checked example](./optional-param-checked.png)
-
-Optional parameter excluded (will not be sent in request body):
 
 ![Optional Parameter unchecked example](./optional-param-unchecked.png)
 
@@ -4893,6 +4891,8 @@ be parsed from the resolved auth token
   "my-google-auth_token": "YOUR_ID_TOKEN_HERE"
 }
 ```
+
+![Using Authenticated Parameter GIF](./edit-headers.gif)
 
 ## Navigating the Toolsets Page
 
