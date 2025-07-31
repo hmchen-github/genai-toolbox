@@ -161,7 +161,7 @@ body {
     background-color: var(--button-secondary)
 }
 
-.tool-button {
+.second-nav-choice {
     display: flex;
     align-items: center;
     padding: 12px;
@@ -577,4 +577,39 @@ body {
     }
 }
 
+.source-details-list {
+  list-style: none; 
+  padding: 0;
+  margin: 0;
+  border: 1px solid #ccc; 
+  border-radius: 4px;
+  overflow: hidden; 
+}
 
+.source-detail-item {
+  display: grid;
+  grid-template-columns: auto 1fr; 
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #eee; 
+  align-items: start;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  & .key {
+    font-weight: bold;
+    color: #7d2f2f;
+    padding-right: 8px;   
+  }
+
+  & .value{
+    color: #0000FF;
+    word-break: break-all; 
+  }
+
+  &:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+}
