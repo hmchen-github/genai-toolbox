@@ -4840,7 +4840,7 @@ with the tool name, description, and available parameters.
 4. Done! Your results will appear in the response field
 5. Uncheck "Prettify JSON" to format the response as plain text
 
-![Run Tool Demo GIF](./run-tool-clipped.gif)
+![Run Tool Demo GIF](./run-tool.gif)
 
 ### Optional Parameters
 
@@ -4892,7 +4892,7 @@ be parsed from the resolved auth token
 }
 ```
 
-![Using Authenticated Parameter GIF](./edit-headers-clipped.gif)
+![Using Authenticated Parameter GIF](./edit-headers.gif)
 
 ## Navigating the Toolsets Page
 
