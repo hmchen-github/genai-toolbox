@@ -6,8 +6,8 @@
 your preferred virtual environment tool for managing dependencies e.g. &lt;a href="https://packaging.python.org/en/latest/tutorials/installing-packages/#creating-virtual-environments">venv&lt;/a>).&lt;/li>
 &lt;li>Installed &lt;a href="https://www.postgresql.org/download/">PostgreSQL 16+ and the &lt;code>psql&lt;/code> client&lt;/a>.&lt;/li>
 &lt;/ol>
-&lt;!-- [START cloud_setup] -->
 &lt;h3 id="cloud-setup-optional">Cloud Setup (Optional)&lt;/h3>
+&lt;!-- [START cloud_setup] -->
 &lt;p>If you plan to use &lt;strong>Google Cloud’s Vertex AI&lt;/strong> with your agent (e.g., using
 &lt;code>vertexai=True&lt;/code> or a Google GenAI model), follow these one-time setup steps for
 local development:&lt;/p>
@@ -19,34 +19,27 @@ local development:&lt;/p>
 &lt;li>Installed &lt;a href="https://nodejs.org/">Node.js (v18 or higher)&lt;/a>.&lt;/li>
 &lt;li>Installed &lt;a href="https://www.postgresql.org/download/">PostgreSQL 16+ and the &lt;code>psql&lt;/code> client&lt;/a>.&lt;/li>
 &lt;/ol>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 &lt;h3 id="cloud-setup-optional">Cloud Setup (Optional)&lt;/h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 &lt;p>If you plan to use &lt;strong>Google Cloud’s Vertex AI&lt;/strong> with your agent (e.g., using
 &lt;code>vertexai=True&lt;/code> or a Google GenAI model), follow these one-time setup steps for
 local development:&lt;/p>
@@ -64,34 +57,27 @@ local development:&lt;/p>
 &lt;li>Installed &lt;a href="https://go.dev/doc/install">Go (v1.24.2 or higher)&lt;/a>.&lt;/li>
 &lt;li>Installed &lt;a href="https://www.postgresql.org/download/">PostgreSQL 16+ and the &lt;code>psql&lt;/code> client&lt;/a>.&lt;/li>
 &lt;/ol>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 &lt;h3 id="cloud-setup-optional">Cloud Setup (Optional)&lt;/h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 &lt;p>If you plan to use &lt;strong>Google Cloud’s Vertex AI&lt;/strong> with your agent (e.g., using
 &lt;code>vertexai=True&lt;/code> or a Google GenAI model), follow these one-time setup steps for
 local development:&lt;/p>
