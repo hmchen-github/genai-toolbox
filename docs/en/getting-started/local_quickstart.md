@@ -17,8 +17,8 @@ This guide assumes you have already done the following:
    your preferred virtual environment tool for managing dependencies e.g. [venv][install-venv]).
 1. Installed [PostgreSQL 16+ and the `psql` client][install-postgres].
 
-<!-- [START cloud_setup] -->
 ### Cloud Setup (Optional)
+<!-- [START cloud_setup] -->
 
 If you plan to use **Google Cloud’s Vertex AI** with your agent (e.g., using
 `vertexai=True` or a Google GenAI model), follow these one-time setup steps for
@@ -39,8 +39,8 @@ local development:
 [install-postgres]: https://www.postgresql.org/download/
 <!-- [END cloud_setup] -->
 
-<!-- [START database_setup] -->
 ## Step 1: Set up your database
+<!-- [START database_setup] -->
 
 In this section, we will create a database, insert some data that needs to be
 accessed by our agent, and create a database user for Toolbox to connect with.
@@ -161,8 +161,8 @@ postgres` and a password next time.
 <!-- [END database_setup] -->
 
 
-<!-- [START configure_toolbox] -->
 ## Step 2: Install and configure Toolbox
+<!-- [START configure_toolbox] -->
 
 In this section, we will download Toolbox, configure our tools in a
 `tools.yaml`, and then run the Toolbox server.
