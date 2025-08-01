@@ -142,7 +142,7 @@ Toolbox enables dynamic reloading by default. To disable, use the
 #### Launching Toolbox UI
 
 To launch Toolbox's interactive UI, use the `--ui` flag. This allows you to test tools and toolsets
-with features such as authorized parameters. To learn more, visit: Using Toolbox UI.
+with features such as authorized parameters. To learn more, visit How to [Use Toolbox UI](../../how-to/use-toolbox-ui/index.md).
 
 ```sh
 ./toolbox --ui
@@ -4838,7 +4838,7 @@ with the tool name, description, and available parameters.
 2. Enter appropriate parameters in each parameter field
 3. Click "Run Tool"
 4. Done! Your results will appear in the response field
-5. Uncheck "Prettify JSON" to format the response as plain text
+5. (Optional) Uncheck "Prettify JSON" to format the response as plain text
 
 ![Run Tool Demo GIF](./run-tool.gif)
 
