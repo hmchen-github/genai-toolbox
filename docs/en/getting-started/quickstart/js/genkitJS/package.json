@@ -1,0 +1,21 @@
+{
+  "name": "genkitjs-quickstart",
+  "version": "1.0.0",
+  "description": "GenAI Toolbox quickstart for GenKit JS",
+  "main": "quickstart.js",
+  "type": "module",
+  "scripts": {
+    "start": "node quickstart.js",
+    "test": "node test_quickstart.js"
+  },
+  "dependencies": {
+    "@toolbox-sdk/core": "^0.1.0",
+    "genkit": "^0.1.0",
+    "@genkit-ai/googleai": "^0.1.0"
+  },
+  "devDependencies": {
+  },
+  "keywords": ["genai", "toolbox", "genkit", "quickstart"],
+  "author": "",
+  "license": "MIT"
+} 
