@@ -12,22 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mssqlsql
+package duckdbsql
 
 import (
 	"context"
 	"database/sql"
 	"fmt"
-	"strings"
 
-	yaml "github.com/goccy/go-yaml"
+	"github.com/goccy/go-yaml"
 	"github.com/googleapis/genai-toolbox/internal/sources"
-	"github.com/googleapis/genai-toolbox/internal/sources/cloudsqlmssql"
-	"github.com/googleapis/genai-toolbox/internal/sources/mssql"
+	"github.com/googleapis/genai-toolbox/internal/sources/duckdb"
 	"github.com/googleapis/genai-toolbox/internal/tools"
 )
 
-const kind string = "mssql-sql"
+const kind string = "duckdb-sql"
 
 func init() {
 	if !tools.Register(kind, newConfig) {
@@ -44,14 +42,12 @@ func newConfig(ctx context.Context, name string, decoder *yaml.Decoder) (tools.T
 }
 
 type compatibleSource interface {
-	MSSQLDB() *sql.DB
+	DuckDb() *sql.DB
 }
 
 // validate compatible sources are still compatible
-var _ compatibleSource = &cloudsqlmssql.Source{}
-var _ compatibleSource = &mssql.Source{}
-
-var compatibleSources = [...]string{cloudsqlmssql.SourceKind, mssql.SourceKind}
+var _ compatibleSource = &duckdb.Source{}
+var compatibleSources = [...]string{duckdb.SourceKind}
 
 type Config struct {
 	Name               string           `yaml:"name" validate:"required"`
@@ -64,18 +60,12 @@ type Config struct {
 	TemplateParameters tools.Parameters `yaml:"templateParameters"`
 }
 
-// validate interface
-var _ tools.ToolConfig = Config{}
-
-func (cfg Config) ToolConfigKind() string {
-	return kind
-}
-
-func (cfg Config) Initialize(srcs map[string]sources.Source) (tools.Tool, error) {
+// Initialize implements tools.ToolConfig.
+func (c Config) Initialize(srcs map[string]sources.Source) (tools.Tool, error) {
 	// verify source exists
-	rawS, ok := srcs[cfg.Source]
+	rawS, ok := srcs[c.Source]
 	if !ok {
-		return nil, fmt.Errorf("no source named %q configured", cfg.Source)
+		return nil, fmt.Errorf("no source named %q configured", c.Source)
 	}
 
 	// verify the source is compatible
@@ -84,32 +74,36 @@ func (cfg Config) Initialize(srcs map[string]sources.Source) (tools.Tool, error)
 		return nil, fmt.Errorf("invalid source for %q tool: source kind must be one of %q", kind, compatibleSources)
 	}
 
-	allParameters, paramManifest, paramMcpManifest := tools.ProcessParameters(cfg.TemplateParameters, cfg.Parameters)
+	allParameters, paramManifest, paramMcpManifest := tools.ProcessParameters(c.TemplateParameters, c.Parameters)
 
 	mcpManifest := tools.McpManifest{
-		Name:        cfg.Name,
-		Description: cfg.Description,
+		Name:        c.Name,
+		Description: c.Description,
 		InputSchema: paramMcpManifest,
 	}
 
 	// finish tool setup
 	t := Tool{
-		Name:               cfg.Name,
+		Name:               c.Name,
 		Kind:               kind,
-		Parameters:         cfg.Parameters,
-		TemplateParameters: cfg.TemplateParameters,
+		Parameters:         c.Parameters,
+		TemplateParameters: c.TemplateParameters,
 		AllParams:          allParameters,
-		Statement:          cfg.Statement,
-		AuthRequired:       cfg.AuthRequired,
-		Db:                 s.MSSQLDB(),
-		manifest:           tools.Manifest{Description: cfg.Description, Parameters: paramManifest, AuthRequired: cfg.AuthRequired},
+		Statement:          c.Statement,
+		AuthRequired:       c.AuthRequired,
+		Db:                 s.DuckDb(),
+		manifest:           tools.Manifest{Description: c.Description, Parameters: paramManifest, AuthRequired: c.AuthRequired},
 		mcpManifest:        mcpManifest,
 	}
 	return t, nil
 }
 
-// validate interface
-var _ tools.Tool = Tool{}
+// ToolConfigKind implements tools.ToolConfig.
+func (c Config) ToolConfigKind() string {
+	return kind
+}
+
+var _ tools.ToolConfig = Config{}
 
 type Tool struct {
 	Name               string           `yaml:"name"`
@@ -120,11 +114,17 @@ type Tool struct {
 	AllParams          tools.Parameters `yaml:"allParams"`
 
 	Db          *sql.DB
-	Statement   string
+	Statement   string `yaml:"statement"`
 	manifest    tools.Manifest
 	mcpManifest tools.McpManifest
 }
 
+// Authorized implements tools.Tool.
+func (t Tool) Authorized(verifiedAuthSources []string) bool {
+	return tools.IsAuthorized(t.AuthRequired, verifiedAuthSources)
+}
+
+// Invoke implements tools.Tool.
 func (t Tool) Invoke(ctx context.Context, params tools.ParamValues, accesToken tools.OAuthAccessToken) (any, error) {
 	paramsMap := params.AsMap()
 	newStatement, err := tools.ResolveTemplateParams(t.TemplateParameters, t.Statement, paramsMap)
@@ -137,73 +137,74 @@ func (t Tool) Invoke(ctx context.Context, params tools.ParamValues, accesToken t
 		return nil, fmt.Errorf("unable to extract standard params %w", err)
 	}
 
-	namedArgs := make([]any, 0, len(newParams))
-	// To support both named args (e.g @id) and positional args (e.g @p1), check
-	// if arg name is contained in the statement.
-	for _, p := range t.Parameters {
-		name := p.GetName()
-		value := paramsMap[name]
-		if strings.Contains(newStatement, "@"+name) {
-			namedArgs = append(namedArgs, sql.Named(name, value))
-		} else {
-			namedArgs = append(namedArgs, value)
-		}
-	}
-
-	rows, err := t.Db.QueryContext(ctx, newStatement, namedArgs...)
+	sliceParams := newParams.AsSlice()
+	// Execute the SQL query with parameters
+	rows, err := t.Db.QueryContext(ctx, newStatement, sliceParams...)
 	if err != nil {
 		return nil, fmt.Errorf("unable to execute query: %w", err)
 	}
+	defer rows.Close()
 
+	// Get column names
 	cols, err := rows.Columns()
 	if err != nil {
-		return nil, fmt.Errorf("unable to fetch column types: %w", err)
+		return nil, fmt.Errorf("unable to get column names: %w", err)
 	}
 
-	// create an array of values for each column, which can be re-used to scan each row
-	rawValues := make([]any, len(cols))
 	values := make([]any, len(cols))
-	for i := range rawValues {
-		values[i] = &rawValues[i]
+	valuePtrs := make([]any, len(cols))
+	for i := range values {
+		valuePtrs[i] = &values[i]
 	}
 
-	var out []any
+	// Prepare the result slice
+	var result []any
+	// Iterate through the rows
 	for rows.Next() {
-		err = rows.Scan(values...)
-		if err != nil {
-			return nil, fmt.Errorf("unable to parse row: %w", err)
+		// Scan the row into the value pointers
+		if err := rows.Scan(valuePtrs...); err != nil {
+			return nil, fmt.Errorf("unable to scan row: %w", err)
 		}
-		vMap := make(map[string]any)
-		for i, name := range cols {
-			vMap[name] = rawValues[i]
+
+		// Create a map for this row
+		rowMap := make(map[string]interface{})
+		for i, col := range cols {
+			val := values[i]
+			// Handle nil values
+			if val == nil {
+				rowMap[col] = nil
+				continue
+			}
+			// Store the value in the map
+			rowMap[col] = val
 		}
-		out = append(out, vMap)
+		result = append(result, rowMap)
 	}
-	err = rows.Close()
-	if err != nil {
+
+	if err = rows.Close(); err != nil {
 		return nil, fmt.Errorf("unable to close rows: %w", err)
 	}
 
-	// Check if error occurred during iteration
-	if err := rows.Err(); err != nil {
-		return nil, err
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating rows: %w", err)
 	}
 
-	return out, nil
+	return result, nil
 }
 
-func (t Tool) ParseParams(data map[string]any, claims map[string]map[string]any) (tools.ParamValues, error) {
-	return tools.ParseParams(t.AllParams, data, claims)
-}
-
+// Manifest implements tools.Tool.
 func (t Tool) Manifest() tools.Manifest {
 	return t.manifest
 }
 
+// McpManifest implements tools.Tool.
 func (t Tool) McpManifest() tools.McpManifest {
 	return t.mcpManifest
 }
 
-func (t Tool) Authorized(verifiedAuthServices []string) bool {
-	return tools.IsAuthorized(t.AuthRequired, verifiedAuthServices)
+// ParseParams implements tools.Tool.
+func (t Tool) ParseParams(data map[string]any, claimsMap map[string]map[string]any) (tools.ParamValues, error) {
+	return tools.ParseParams(t.AllParams, data, claimsMap)
 }
+
+var _ tools.Tool = Tool{}
