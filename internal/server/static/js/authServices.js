@@ -15,13 +15,13 @@
 import { loadItems } from './resourceDisplay.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    const sourceListArea = document.getElementById('secondary-panel-content');
-    const sourceInfoArea = document.getElementById('source-info-area');
+    const authServiceListArea = document.getElementById('secondary-panel-content');
+    const authServiceInfoArea = document.getElementById('auth-service-info-area');
 
-    if (!sourceListArea || !sourceInfoArea) {
+    if (!authServiceListArea || !authServiceInfoArea) {
         console.error('Required DOM elements not found.');
         return;
     }
 
-    loadItems('sources', sourceListArea, sourceInfoArea);
+    loadItems('authservices', authServiceListArea, authServiceInfoArea);
 });
