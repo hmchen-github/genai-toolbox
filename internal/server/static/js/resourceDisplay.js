@@ -98,41 +98,58 @@ const itemConfigs = {
  * @param {!HTMLElement} displayArea - The HTML element to render the details into.
  * @param {string} displayName - The display name of the item type.
  */
-function displayItemDetails(itemName, itemDetails, displayArea, displayName) {
+function displayItemDetails(itemName, itemDetails, displayArea) {
     displayArea.innerHTML = '';
 
-    const title = document.createElement('h3');
-    title.textContent = `${displayName}: ${itemName}`;
-    displayArea.appendChild(title);
+    const container = document.createElement('div');
+    container.className = 'tool-box item-details-box';
+
+    const dl = document.createElement('dl');
+    dl.classList.add('item-details-list');
+
+    // add the name (key in the original json response) as the first key-value pair
+    const nameEntryDiv = document.createElement('div');
+    nameEntryDiv.classList.add('item-detail-entry');
+
+    const nameDt = document.createElement('dt');
+    nameDt.classList.add('item-detail-key');
+    nameDt.textContent = 'name';
+    nameEntryDiv.appendChild(nameDt);
+
+    const nameDd = document.createElement('dd');
+    nameDd.classList.add('item-detail-value');
+    nameDd.textContent = itemName;
+    nameEntryDiv.appendChild(nameDd);
+
+    dl.appendChild(nameEntryDiv);
 
     const entries = Object.entries(itemDetails);
-    if (entries.length === 0) {
+    if (entries.length === 0 && !itemName) { 
         const para = document.createElement('p');
         para.textContent = 'No details available.';
-        displayArea.appendChild(para);
+        container.appendChild(para);
+        displayArea.appendChild(container);
         return;
     }
 
-    const ul = document.createElement('ul');
-    ul.classList.add('resource-details-list');
-
     for (const [key, value] of entries) {
-        const li = document.createElement('li');
-        li.classList.add('resource-detail-item');
+        const entryDiv = document.createElement('div');
+        entryDiv.classList.add('item-detail-entry');
 
-        const keyDiv = document.createElement('div');
-        keyDiv.classList.add('key');
-        keyDiv.textContent = key;
-        li.appendChild(keyDiv);
+        const dt = document.createElement('dt');
+        dt.classList.add('item-detail-key');
+        dt.textContent = key;
+        entryDiv.appendChild(dt);
 
-        const valueDiv = document.createElement('div');
-        valueDiv.classList.add('value');
-        valueDiv.textContent = String(value);
-        li.appendChild(valueDiv);
+        const dd = document.createElement('dd');
+        dd.classList.add('item-detail-value');
+        dd.textContent = String(value);
+        entryDiv.appendChild(dd);
 
-        ul.appendChild(li);
+        dl.appendChild(entryDiv);
     }
-    displayArea.appendChild(ul);
+    container.appendChild(dl);
+    displayArea.appendChild(container);
 }
 
 /**
@@ -152,7 +169,7 @@ async function fetchItemDetails(itemType, itemName, displayArea, config) {
             throw new Error(`${config.displayName} "${itemName}" data not found in API response.`);
         }
 
-        displayItemDetails(itemName, itemDetails, displayArea, config.displayName);
+        displayItemDetails(itemName, itemDetails, displayArea);
         console.log(`${config.displayName} details:`, itemDetails);
 
     } catch (error) {
