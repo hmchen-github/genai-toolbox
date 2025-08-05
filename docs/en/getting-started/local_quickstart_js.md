@@ -17,13 +17,13 @@ This guide assumes you have already done the following:
 [install-postgres]: https://www.postgresql.org/download/
 
 ### Cloud Setup (Optional)
-{{< mdRegionInclude "local_quickstart.md" "cloud_setup" >}}
+{{< snippet "local_quickstart.md" "cloud_setup" >}}
 
 ## Step 1: Set up your database
-{{< mdRegionInclude "local_quickstart.md" "database_setup" >}}
+{{< snippet "local_quickstart.md" "database_setup" >}}
 
 ## Step 2: Install and configure Toolbox
-{{< mdRegionInclude "local_quickstart.md" "configure_toolbox" >}}
+{{< snippet "local_quickstart.md" "configure_toolbox" >}}
 
 ## Step 3: Connect your agent to Toolbox
 
