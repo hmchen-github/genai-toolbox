@@ -31,11 +31,10 @@ Kuzu has the following core features:
 
 ### Database File
 
-You need a directory to store the Kuzu database files. This can be:
+To use Kuzu, you can either:
 
-- An existing database file
-- A path where a new database file should be created
-- `:memory:` for an in-memory database
+- Specify a file path for a persistent database file stored on the filesystem
+- Omit the file path to use an in-memory database
 
 ## Example
 
@@ -57,7 +56,6 @@ For an in-memory database:
 sources:
   my-kuzu-memory-db:
     kind: "kuzu"
-    database: ":memory:"
     bufferPoolSize: 1073741824  # 1GB
     maxNumThreads: 4
     enableCompression: true
@@ -78,3 +76,5 @@ sources:
 | enableCompression  | bool     | false        | Enables or disables data compression. Default is true.                           |
 | readOnly           | bool     | false        | Sets the database to read-only mode if true. Default is false.                   |
 | maxDbSize          | uint64   | false        | Maximum database size in bytes (e.g., 5368709120 for 5GB).                      |
+
+For a complete list of available configuration options, refer to the [Kuzu SystemConfig options](https://pkg.go.dev/github.com/kuzudb/go-kuzu#SystemConfig).
