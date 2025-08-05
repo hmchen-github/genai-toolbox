@@ -1,26 +1,26 @@
 ---
-title: "kuzudb-cypher"
+title: "kuzu-cypher"
 type: docs
 weight: 1
 description: > 
-  A "kuzudb-cypher" tool executes a pre-defined cypher statement against a KuzuDB
+  A "kuzu-cypher" tool executes a pre-defined cypher statement against a Kuzu
   database.
 aliases:
-- /resources/tools/kuzudb-cypher
+- /resources/tools/kuzu-cypher
 ---
 
 ## About
 
-A `kuzudb-cypher` tool executes a pre-defined Cypher statement against a KuzuDB graph database. It is designed to work with KuzuDB's embedded graph database, optimized for high query speed and scalability. The tool is compatible with the following sources:
+A `kuzu-cypher` tool executes a pre-defined Cypher statement against a Kuzu graph database. It is designed to work with Kuzu's embedded graph database, optimized for high query speed and scalability. The tool is compatible with the following sources:
 
-- [kuzudb](../../sources/kuzudb.md)
+- [kuzu](../../sources/kuzu.md)
 
-The specified Cypher statement is executed as a [parameterized statement][kuzudb-parameters], with parameters referenced by their name (e.g., `$id`). This approach ensures security by preventing Cypher injection attacks.
+The specified Cypher statement is executed as a [parameterized statement][kuzu-parameters], with parameters referenced by their name (e.g., `$id`). This approach ensures security by preventing Cypher injection attacks.
 
 > **Note:** This tool uses parameterized queries to prevent Cypher injections. \
 > Query parameters can be used as substitutes for arbitrary expressions but cannot replace identifiers, node labels, relationship types, or other structural parts of the query.
 
-[kuzudb-parameters]:
+[kuzu-parameters]:
     https://docs.kuzudb.com/get-started/prepared-statements/
 
 ## Example
@@ -28,7 +28,7 @@ The specified Cypher statement is executed as a [parameterized statement][kuzudb
 ```yaml
 tools:
   find_collaborators:
-    kind: kuzudb-cypher
+    kind: kuzu-cypher
     source: my-kuzu-social-network
     statement: |
       MATCH (p1:Person)-[:Collaborated_With]->(p2:Person)
@@ -71,7 +71,7 @@ tools:
 ```yaml
 tools:
   find_friends:
-    kind: kuzudb-cypher
+    kind: kuzu-cypher
     source: my-kuzu-social-network
     statement: |
       MATCH (p1:{{.nodeLabel}})-[:friends_with]->(p2:{{.nodeLabel}})
@@ -101,8 +101,8 @@ tools:
 
 | **Field**            | **Type**                              | **Required** | **Description**                                                                 |
 |----------------------|:-------------------------------------:|:------------:|---------------------------------------------------------------------------------|
-| kind                 | string                                | true         | Must be "kuzudb-cypher".                                                       |
-| source               | string                                | true         | Name of the KuzuDB source the Cypher query should execute on.                   |
+| kind                 | string                                | true         | Must be "kuzu-cypher".                                                       |
+| source               | string                                | true         | Name of the Kuzu source the Cypher query should execute on.                   |
 | description          | string                                | true         | Description of the tool that is passed to the LLM for context.                  |
 | statement            | string                                | true         | Cypher statement to execute.                                                   |
 | authRequired         | []string                              | false        | List of authentication requirements for executing the query (if applicable).    |

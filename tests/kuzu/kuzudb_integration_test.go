@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package kuzudb
+package kuzu
 
 import (
 	"bytes"
@@ -35,8 +35,8 @@ import (
 
 var (
 	database   = "/tmp/example.kuzu"
-	toolKind   = "kuzudb-cypher"
-	sourceKind = "kuzudb"
+	toolKind   = "kuzu-cypher"
+	sourceKind = "kuzu"
 )
 
 func getSourceConfig() map[string]any {
@@ -239,7 +239,11 @@ func getToolConfig(paramToolStatement, paramToolStatement2, authToolStatement, t
 }
 
 func runToolInvokeTest(t *testing.T) {
-	idToken := "client-id"
+	// Get ID token
+	idToken, err := tests.GetGoogleIdToken(tests.ClientId)
+	if err != nil {
+		t.Fatalf("error getting Google ID token: %s", err)
+	}
 	// Test tool invoke endpoint
 	invokeTcs := []struct {
 		name          string

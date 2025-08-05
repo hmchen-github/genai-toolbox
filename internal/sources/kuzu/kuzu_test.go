@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package kuzudb_test
+package kuzu_test
 
 import (
 	"testing"
@@ -21,11 +21,11 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/googleapis/genai-toolbox/internal/server"
-	"github.com/googleapis/genai-toolbox/internal/sources/kuzudb"
+	"github.com/googleapis/genai-toolbox/internal/sources/kuzu"
 	"github.com/googleapis/genai-toolbox/internal/testutils"
 )
 
-func TestParseFromYamlKuzudb(t *testing.T) {
+func TestParseFromYamlKuzu(t *testing.T) {
 	tcs := []struct {
 		desc string
 		in   string
@@ -36,13 +36,13 @@ func TestParseFromYamlKuzudb(t *testing.T) {
 			in: `
             sources:
                 my-kuzu-db:
-                    kind: kuzudb
+                    kind: kuzu
                     database: /path/to/database.db
             `,
 			want: server.SourceConfigs{
-				"my-kuzu-db": kuzudb.Config{
+				"my-kuzu-db": kuzu.Config{
 					Name:     "my-kuzu-db",
-					Kind:     kuzudb.KuzuDbKind,
+					Kind:     kuzu.SourceKind,
 					Database: "/path/to/database.db",
 				},
 			},
@@ -52,15 +52,15 @@ func TestParseFromYamlKuzudb(t *testing.T) {
 			in: `
 			sources:
 				my-kuzu-db:
-					kind: kuzudb
+					kind: kuzu
 					database: /path/to/database.db
 					maxNumThreads: 10
 					readOnly: true
             `,
 			want: server.SourceConfigs{
-				"my-kuzu-db": kuzudb.Config{
+				"my-kuzu-db": kuzu.Config{
 					Name:              "my-kuzu-db",
-					Kind:              kuzudb.KuzuDbKind,
+					Kind:              kuzu.SourceKind,
 					Database:          "/path/to/database.db",
 					MaxNumThreads:     10,
 					ReadOnly:          true,

@@ -1,16 +1,16 @@
 ---
-title: "KùzuDB"
+title: "Kùzu"
 type: docs
 weight: 1
 description: > 
-    KùzuDB is an open-source, embedded graph database built for query speed and scalability, optimized for complex join-heavy analytical workloads using the Cypher query language.
+    Kùzu is an open-source, embedded graph database built for query speed and scalability, optimized for complex join-heavy analytical workloads using the Cypher query language.
 ---
 
 ## About
 
-[KuzuDB](https://kuzudb.com/) is an embedded graph database designed for high query speed and scalability, optimized for complex, join-heavy analytical workloads on large graph datasets. It provides a lightweight, in-process integration with applications, making it ideal for scenarios requiring fast and efficient graph data processing.
+[Kuzu](https://kuzudb.com/) is an embedded graph database designed for high query speed and scalability, optimized for complex, join-heavy analytical workloads on large graph datasets. It provides a lightweight, in-process integration with applications, making it ideal for scenarios requiring fast and efficient graph data processing.
 
-KuzuDB has the following core features:
+Kuzu has the following core features:
 
 - **Property Graph Data Model and Cypher Query Language**: Supports the property graph model and uses Cypher, a powerful and expressive query language for graph databases.
 - **Embedded Integration**: Runs in-process with applications, eliminating the need for a separate server.
@@ -24,14 +24,14 @@ KuzuDB has the following core features:
 
 ## Available Tools
 
-- [`kuzudb-cypher`](../tools/kuzudb/kuzudb-cypher.md)  
+- [`kuzu-cypher`](../tools/kuzu/kuzu-cypher.md)  
   Execute pre-defined Cypher queries with placeholder parameters.
 
 ## Requirements
 
 ### Database File
 
-You need a directory to store the KuzuDB database files. This can be:
+You need a directory to store the Kuzu database files. This can be:
 
 - An existing database file
 - A path where a new database file should be created
@@ -42,7 +42,7 @@ You need a directory to store the KuzuDB database files. This can be:
 ```yaml
 sources:
   my-kuzu-db:
-    kind: "kuzudb"
+    kind: "kuzu"
     database: "/path/to/database.db"
     bufferPoolSize: 1073741824  # 1GB
     maxNumThreads: 4
@@ -56,7 +56,7 @@ For an in-memory database:
 ```yaml
 sources:
   my-kuzu-memory-db:
-    kind: "kuzudb"
+    kind: "kuzu"
     database: ":memory:"
     bufferPoolSize: 1073741824  # 1GB
     maxNumThreads: 4
@@ -71,7 +71,7 @@ sources:
 
 | **Field**          | **Type** | **Required** | **Description**                                                                 |
 |--------------------|:--------:|:------------:|---------------------------------------------------------------------------------|
-| kind               | string   | true         | Must be "kuzudb".                                                                 |
+| kind               | string   | true         | Must be "kuzu".                                                                 |
 | database           | string   | false        | Path to the database directory. Default is ":memory:" which creates an in-memory database. |
 | bufferPoolSize     | uint64   | false        | Size of the buffer pool in bytes (e.g., 1073741824 for 1GB).                    |
 | maxNumThreads      | uint64   | false        | Maximum number of threads for query execution.                                   |

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package kuzudb
+package kuzu
 
 import (
 	"context"
@@ -24,11 +24,11 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-var KuzuDbKind string = "kuzudb"
+var SourceKind string = "kuzu"
 
 func init() {
-	if !sources.Register(KuzuDbKind, newConfig) {
-		panic(fmt.Sprintf("source kind %q already registered", KuzuDbKind))
+	if !sources.Register(SourceKind, newConfig) {
+		panic(fmt.Sprintf("source kind %q already registered", SourceKind))
 	}
 }
 
@@ -52,18 +52,18 @@ type Config struct {
 }
 
 func (cfg Config) SourceConfigKind() string {
-	return KuzuDbKind
+	return SourceKind
 }
 
 func (cfg Config) Initialize(ctx context.Context, tracer trace.Tracer) (sources.Source, error) {
-	conn, err := initKuzuDbConnection(ctx, tracer, cfg)
+	conn, err := initKuzuConnection(ctx, tracer, cfg)
 	if err != nil {
 		return nil, fmt.Errorf("unable to open a database connection: %w", err)
 	}
 
 	source := &Source{
 		Name:       cfg.Name,
-		Kind:       KuzuDbKind,
+		Kind:       SourceKind,
 		Connection: conn,
 	}
 	return source, nil
@@ -79,7 +79,7 @@ type Source struct {
 
 // SourceKind implements sources.Source.
 func (s *Source) SourceKind() string {
-	return KuzuDbKind
+	return SourceKind
 }
 
 func (s *Source) KuzuDB() *kuzu.Connection {
@@ -88,9 +88,9 @@ func (s *Source) KuzuDB() *kuzu.Connection {
 
 var _ sources.Source = &Source{}
 
-func initKuzuDbConnection(ctx context.Context, tracer trace.Tracer, config Config) (*kuzu.Connection, error) {
+func initKuzuConnection(ctx context.Context, tracer trace.Tracer, config Config) (*kuzu.Connection, error) {
 	//nolint:all // Reassigned ctx
-	ctx, span := sources.InitConnectionSpan(ctx, tracer, KuzuDbKind, config.Name)
+	ctx, span := sources.InitConnectionSpan(ctx, tracer, SourceKind, config.Name)
 	defer span.End()
 	systemConfig := kuzu.DefaultSystemConfig()
 	if config.BufferPoolSize != 0 {
@@ -108,13 +108,8 @@ func initKuzuDbConnection(ctx context.Context, tracer trace.Tracer, config Confi
 	if config.MaxNumThreads != 0 {
 		systemConfig.MaxNumThreads = config.MaxNumThreads
 	}
-	var db *kuzu.Database
-	var err error
-	if config.Database != "" {
-		db, err = kuzu.OpenDatabase(config.Database, systemConfig)
-	} else {
-		db, err = kuzu.OpenInMemoryDatabase(systemConfig)
-	}
+
+	db, err := kuzu.OpenDatabase(config.Database, systemConfig)
 	if err != nil {
 		return nil, fmt.Errorf("unable to connect to database: %w", err)
 	}

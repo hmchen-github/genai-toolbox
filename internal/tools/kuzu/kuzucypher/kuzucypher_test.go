@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package kuzudbcypher_test
+package kuzucypher_test
 
 import (
 	"testing"
@@ -22,10 +22,10 @@ import (
 	"github.com/googleapis/genai-toolbox/internal/server"
 	"github.com/googleapis/genai-toolbox/internal/testutils"
 	"github.com/googleapis/genai-toolbox/internal/tools"
-	"github.com/googleapis/genai-toolbox/internal/tools/kuzudb/kuzudbcypher"
+	"github.com/googleapis/genai-toolbox/internal/tools/kuzu/kuzucypher"
 )
 
-func TestParseFromYamlKuzuDB(t *testing.T) {
+func TestParseFromYamlKuzu(t *testing.T) {
 	ctx, err := testutils.ContextWithNewLogger()
 	if err != nil {
 		t.Fatalf("unexpected error: %s", err)
@@ -40,8 +40,8 @@ func TestParseFromYamlKuzuDB(t *testing.T) {
 			in: `
 			tools:
 				example_tool:
-					kind: kuzudb-cypher
-					source: my-kuzudb-instance
+					kind: kuzu-cypher
+					source: my-kuzu-instance
 					description: some description
 					statement: |
 						match (a:user {name:$name}) return a.*;
@@ -59,10 +59,10 @@ func TestParseFromYamlKuzuDB(t *testing.T) {
 							  field: user_id
 			`,
 			want: server.ToolConfigs{
-				"example_tool": kuzudbcypher.Config{
+				"example_tool": kuzucypher.Config{
 					Name:         "example_tool",
-					Kind:         "kuzudb-cypher",
-					Source:       "my-kuzudb-instance",
+					Kind:         "kuzu-cypher",
+					Source:       "my-kuzu-instance",
 					Description:  "some description",
 					Statement:    "match (a:user {name:$name}) return a.*;\n",
 					AuthRequired: []string{"my-google-auth-service", "other-auth-service"},

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package kuzudbcypher
+package kuzucypher
 
 import (
 	"context"
@@ -20,12 +20,12 @@ import (
 
 	"github.com/goccy/go-yaml"
 	"github.com/googleapis/genai-toolbox/internal/sources"
-	"github.com/googleapis/genai-toolbox/internal/sources/kuzudb"
+	kuzuSource "github.com/googleapis/genai-toolbox/internal/sources/kuzu"
 	"github.com/googleapis/genai-toolbox/internal/tools"
 	"github.com/kuzudb/go-kuzu"
 )
 
-var kind string = "kuzudb-cypher"
+var kind string = "kuzu-cypher"
 
 func init() {
 	if !tools.Register(kind, newConfig) {
@@ -57,8 +57,8 @@ type compatibleSource interface {
 }
 
 // validate compatible sources are still compatible
-var _ compatibleSource = &kuzudb.Source{}
-var compatibleSources = [...]string{kuzudb.KuzuDbKind}
+var _ compatibleSource = &kuzuSource.Source{}
+var compatibleSources = [...]string{kuzuSource.SourceKind}
 
 // Initialize implements tools.ToolConfig.
 func (cfg Config) Initialize(srcs map[string]sources.Source) (tools.Tool, error) {
@@ -129,8 +129,7 @@ func (t Tool) Invoke(ctx context.Context, params tools.ParamValues) (any, error)
 	if err != nil {
 		return nil, fmt.Errorf("unable to extract template params %w", err)
 	}
-	fmt.Printf("new statement %s\n", newStatement)
-	fmt.Printf("params %v\n", paramsMap)
+
 	preparedStatement, err := conn.Prepare(newStatement)
 	if err != nil {
 		return nil, fmt.Errorf("unable to generate prepared statement %w", err)
@@ -167,7 +166,7 @@ func (t Tool) Invoke(ctx context.Context, params tools.ParamValues) (any, error)
 		}
 		out = append(out, rowMap)
 	}
-	fmt.Printf("result %v\n", out)
+
 	return out, nil
 }
 

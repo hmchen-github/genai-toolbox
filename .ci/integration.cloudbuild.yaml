@@ -547,7 +547,7 @@ steps:
           tidb \
           tidbsql tidbexecutesql
 
-  - id: "kuzudb"
+  - id: "kuzu"
     name: golang:1
     waitFor: ["compile-test-binary"]
     entrypoint: /bin/bash
@@ -562,9 +562,9 @@ steps:
       - -c
       - |
         .ci/test_with_coverage.sh \
-          "KuzuDB" \
-          kuzudb \
-          kuzudb 
+          "Kuzu" \
+          kuzu \
+          kuzu 
           
 availableSecrets:
   secretManager:
