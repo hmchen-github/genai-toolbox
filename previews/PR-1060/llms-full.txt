@@ -89,7 +89,7 @@ To install Toolbox as a binary:
 
 ```sh
 # see releases page for other versions
-export VERSION=0.10.0
+export VERSION=0.11.0
 curl -O https://storage.googleapis.com/genai-toolbox/v$VERSION/linux/amd64/toolbox
 chmod +x toolbox
 ```
@@ -100,7 +100,7 @@ You can also install Toolbox as a container:
 
 ```sh
 # see releases page for other versions
-export VERSION=0.10.0
+export VERSION=0.11.0
 docker pull us-central1-docker.pkg.dev/database-toolbox/toolbox/toolbox:$VERSION
 ```
 
@@ -118,7 +118,7 @@ To install from source, ensure you have the latest version of
 [Go installed](https://go.dev/doc/install), and then run the following command:
 
 ```sh
-go install github.com/googleapis/genai-toolbox@v0.10.0
+go install github.com/googleapis/genai-toolbox@v0.11.0
 ```
 
 {{% /tab %}}
@@ -138,6 +138,15 @@ execute `toolbox` to start the server:
 Toolbox enables dynamic reloading by default. To disable, use the
 `--disable-reload` flag.
 {{< /notice >}}
+
+#### Launching Toolbox UI
+
+To launch Toolbox's interactive UI, use the `--ui` flag. This allows you to test tools and toolsets
+with features such as authorized parameters. To learn more, visit [Toolbox UI](../../how-to/use-toolbox-ui/index.md).
+
+```sh
+./toolbox --ui
+```
 
 #### Homebrew Users
 
@@ -759,7 +768,7 @@ In this section, we will download Toolbox, configure our tools in a
     <!-- {x-release-please-start-version} -->
     ```bash
     export OS="linux/amd64" # one of linux/amd64, darwin/arm64, darwin/amd64, or windows/amd64
-    curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/$OS/toolbox
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/$OS/toolbox
     ```
     <!-- {x-release-please-end} -->
 
@@ -1434,7 +1443,7 @@ In this section, we will download Toolbox, configure our tools in a
     <!-- {x-release-please-start-version} -->
     ```bash
     export OS="linux/amd64" # one of linux/amd64, darwin/arm64, darwin/amd64, or windows/amd64
-    curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/$OS/toolbox
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/$OS/toolbox
     ```
     <!-- {x-release-please-end} -->
 
@@ -2010,7 +2019,7 @@ In this section, we will download Toolbox, configure our tools in a
     <!-- {x-release-please-start-version} -->
     ```bash
     export OS="linux/amd64" # one of linux/amd64, darwin/arm64, darwin/amd64, or windows/amd64
-    curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/$OS/toolbox
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/$OS/toolbox
     ```
     <!-- {x-release-please-end} -->
 
@@ -2873,7 +2882,7 @@ In this section, we will download Toolbox, configure our tools in a
     <!-- {x-release-please-start-version} -->
     ```bash
     export OS="linux/amd64" # one of linux/amd64, darwin/arm64, darwin/amd64, or windows/amd64
-    curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/$OS/toolbox
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/$OS/toolbox
     ```
     <!-- {x-release-please-end} -->
 
@@ -3335,349 +3344,20 @@ List of guides detailing how to connect your AI tools (IDEs) to Toolbox using MC
 Create your AlloyDB database with MCP Toolbox.
 
 
-This guide covers how to use [MCP Toolbox for Databases][toolbox] to create
-AlloyDB clusters and instances from IDE enabling their E2E journey.
-
-- [Cursor][cursor]
-- [Windsurf][windsurf] (Codium)
-- [Visual Studio Code][vscode] (Copilot)
-- [Cline][cline] (VS Code extension)
-- [Claude desktop][claudedesktop]
-- [Claude code][claudecode]
-- [Gemini CLI][geminicli]
-- [Gemini Code Assist][geminicodeassist]
-
-[toolbox]: https://github.com/googleapis/genai-toolbox
-[cursor]: #configure-your-mcp-client
-[windsurf]: #configure-your-mcp-client
-[vscode]: #configure-your-mcp-client
-[cline]: #configure-your-mcp-client
-[claudedesktop]: #configure-your-mcp-client
-[claudecode]: #configure-your-mcp-client
-[geminicli]: #configure-your-mcp-client
-[geminicodeassist]: #configure-your-mcp-client
-
-## Before you begin
-
-1. In the Google Cloud console, on the [project selector
-   page](https://console.cloud.google.com/projectselector2/home/dashboard),
-   select or create a Google Cloud project.
-
-1. [Make sure that billing is enabled for your Google Cloud
-   project](https://cloud.google.com/billing/docs/how-to/verify-billing-enabled#confirm_billing_is_enabled_on_a_project).
-
-## Install MCP Toolbox
-
-1. Download the latest version of Toolbox as a binary. Select the [correct
-   binary](https://github.com/googleapis/genai-toolbox/releases) corresponding
-   to your OS and CPU architecture. You are required to use Toolbox version
-   V0.10.0+:
-
-   <!-- {x-release-please-start-version} -->
-   {{< tabpane persist=header >}}
-{{< tab header="linux/amd64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/linux/amd64/toolbox
-{{< /tab >}}
-
-{{< tab header="darwin/arm64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/darwin/arm64/toolbox
-{{< /tab >}}
-
-{{< tab header="darwin/amd64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/darwin/amd64/toolbox
-{{< /tab >}}
-
-{{< tab header="windows/amd64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/windows/amd64/toolbox.exe
-{{< /tab >}}
-{{< /tabpane >}}
-    <!-- {x-release-please-end} -->
-
-1. Make the binary executable:
-
-   ```bash
-   chmod +x toolbox
-   ```
-
-1. Verify the installation:
-
-   ```bash
-   ./toolbox --version
-   ```
-
-## Configure your MCP Client
-
-{{< tabpane text=true >}}
-{{% tab header="Claude code" lang="en" %}}
-
-1. Install [Claude
-   Code](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview).
-1. Create a `.mcp.json` file in your project root if it doesn't exist.
-1. Generate Access token to be used as API_KEY using `gcloud auth
-   print-access-token`.
-
-    > **Note:** The lifetime of token is 1 hour.
-
-1. Add the following configuration, replace the environment variables with your
-   values, and save:
-
-   ```json
-   {
-     "mcpServers": {
-       "alloydb-admin": {
-         "command": "./PATH/TO/toolbox",
-         "args": ["--prebuilt", "alloydb-postgres-admin", "--stdio"],
-         "env": {
-           "API_KEY": "your-api-key"
-         }
-       }
-     }
-   }
-   ```
-
-1. Restart Claude code to apply the new configuration.
-   {{% /tab %}}
-
-{{% tab header="Claude desktop" lang="en" %}}
-
-1. Open [Claude desktop](https://claude.ai/download) and navigate to Settings.
-1. Under the Developer tab, tap Edit Config to open the configuration file.
-1. Generate Access token to be used as API_KEY using `gcloud auth
-   print-access-token`.
-
-    > **Note:** The lifetime of token is 1 hour.
-
-1. Add the following configuration, replace the environment variables with your
-   values, and save:
-
-   ```json
-   {
-     "mcpServers": {
-       "alloydb-admin": {
-         "command": "./PATH/TO/toolbox",
-         "args": ["--prebuilt", "alloydb-postgres-admin", "--stdio"],
-         "env": {
-           "API_KEY": "your-api-key"
-         }
-       }
-     }
-   }
-   ```
-
-1. Restart Claude desktop.
-1. From the new chat screen, you should see a hammer (MCP) icon appear with the
-   new MCP server available.
-   {{% /tab %}}
-
-{{% tab header="Cline" lang="en" %}}
-
-1. Open the [Cline](https://github.com/cline/cline) extension in VS Code and tap
-   the **MCP Servers** icon.
-1. Tap Configure MCP Servers to open the configuration file.
-1. Generate Access token to be used as API_KEY using `gcloud auth
-   print-access-token`.
-
-    > **Note:** The lifetime of token is 1 hour.
-
-1. Add the following configuration, replace the environment variables with your
-   values, and save:
-
-   ```json
-   {
-     "mcpServers": {
-       "alloydb-admin": {
-         "command": "./PATH/TO/toolbox",
-         "args": ["--prebuilt", "alloydb-postgres-admin", "--stdio"],
-         "env": {
-           "API_KEY": "your-api-key"
-         }
-       }
-     }
-   }
-   ```
-
-1. You should see a green active status after the server is successfully
-   connected.
-   {{% /tab %}}
-
-{{% tab header="Cursor" lang="en" %}}
-
-1. Create a `.cursor` directory in your project root if it doesn't exist.
-1. Create a `.cursor/mcp.json` file if it doesn't exist and open it.
-1. Generate Access token to be used as API_KEY using `gcloud auth
-   print-access-token`.
-
-    > **Note:** The lifetime of token is 1 hour.
-
-1. Add the following configuration, replace the environment variables with your
-   values, and save:
-
-   ```json
-   {
-     "mcpServers": {
-       "alloydb-admin": {
-         "command": "./PATH/TO/toolbox",
-         "args": ["--prebuilt", "alloydb-postgres-admin", "--stdio"],
-         "env": {
-           "API_KEY": "your-api-key"
-         }
-       }
-     }
-   }
-   ```
-
-1. [Cursor](https://www.cursor.com/) and navigate to **Settings > Cursor
-   Settings > MCP**. You should see a green active status after the server is
-   successfully connected.
-   {{% /tab %}}
-
-{{% tab header="Visual Studio Code (Copilot)" lang="en" %}}
-
-1. Open [VS Code](https://code.visualstudio.com/docs/copilot/overview) and
-   create a `.vscode` directory in your project root if it doesn't exist.
-1. Create a `.vscode/mcp.json` file if it doesn't exist and open it.
-1. Generate Access token to be used as API_KEY using `gcloud auth
-   print-access-token`.
-
-    > **Note:** The lifetime of token is 1 hour.
-
-1. Add the following configuration, replace the environment variables with your
-   values, and save:
-
-```json
-{
-  "mcpServers": {
-    "alloydb-admin": {
-      "command": "./PATH/TO/toolbox",
-      "args": ["--prebuilt", "alloydb-postgres-admin", "--stdio"],
-      "env": {
-        "API_KEY": "your-api-key"
-      }
-    }
-  }
-}
-```
-
-{{% /tab %}}
-
-{{% tab header="Windsurf" lang="en" %}}
-
-1. Open [Windsurf](https://docs.codeium.com/windsurf) and navigate to the
-   Cascade assistant.
-1. Tap on the hammer (MCP) icon, then Configure to open the configuration file.
-1. Generate Access token to be used as API_KEY using `gcloud auth
-   print-access-token`.
-
-    > **Note:** The lifetime of token is 1 hour.
-
-1. Add the following configuration, replace the environment variables with your
-   values, and save:
-
-```json
-{
-  "mcpServers": {
-    "alloydb-admin": {
-      "command": "./PATH/TO/toolbox",
-      "args": ["--prebuilt", "alloydb-postgres-admin", "--stdio"],
-      "env": {
-        "API_KEY": "your-api-key"
-      }
-    }
-  }
-}
-```
-
-{{% /tab %}}
-{{% tab header="Gemini CLI" lang="en" %}}
-
-1. Install the [Gemini
-   CLI](https://github.com/google-gemini/gemini-cli?tab=readme-ov-file#quickstart).
-1. In your working directory, create a folder named `.gemini`. Within it, create
-   a `settings.json` file.
-1. Generate Access token to be used as API_KEY using `gcloud auth print-access-token`.
-
-    > **Note:** The lifetime of token is 1 hour.
-
-1. Add the following configuration, replace the environment variables with your
-   values, and save:
-
-```json
-{
-  "mcpServers": {
-    "alloydb-admin": {
-      "command": "./PATH/TO/toolbox",
-      "args": ["--prebuilt", "alloydb-postgres-admin", "--stdio"],
-      "env": {
-        "API_KEY": "your-api-key"
-      }
-    }
-  }
-}
-```
-
-{{% /tab %}}
-{{% tab header="Gemini Code Assist" lang="en" %}}
-
-1. Install the [Gemini Code
-   Assist](https://marketplace.visualstudio.com/items?itemName=Google.geminicodeassist)
-   extension in Visual Studio Code.
-1. Enable Agent Mode in Gemini Code Assist chat.
-1. In your working directory, create a folder named `.gemini`. Within it, create
-   a `settings.json` file.
-1. Generate Access token to be used as API_KEY using `gcloud auth print-access-token`.
-
-    > **Note:** The lifetime of token is 1 hour.
-
-1. Add the following configuration, replace the environment variables with your
-   values, and save:
-
-```json
-{
-  "mcpServers": {
-    "alloydb-admin": {
-      "command": "./PATH/TO/toolbox",
-      "args": ["--prebuilt", "alloydb-postgres-admin", "--stdio"],
-      "env": {
-        "API_KEY": "your-api-key"
-      }
-    }
-  }
-}
-```
-
-{{% /tab %}}
-{{< /tabpane >}}
-
-## Use Tools
-
-Your AI tool is now connected to AlloyDB using MCP. Try asking your AI assistant
-to create a database, cluster or instance.
-
-The following tools are available to the LLM:
-
-1. **alloydb-create-cluster**: creates alloydb cluster
-1. **alloydb-create-instance**: creates alloydb instance (PRIMARY, READ_POOL or SECONDARY)
-1. **alloydb-get-operation**: polls on operations API until the operation is done.
-
-{{< notice note >}}
-Prebuilt tools are pre-1.0, so expect some tool changes between versions. LLMs
-will adapt to the tools available, so this shouldn't affect most users.
-{{< /notice >}}
-
-## Connect to your Data
-
-After setting up an AlloyDB cluster and instance, you can [connect your IDE to
-the
-database](https://cloud.google.com/alloydb/docs/pre-built-tools-with-mcp-toolbox).
-
+<html>
+  <head>
+    <link rel="canonical" href="https://cloud.google.com/alloydb/docs/create-database-with-mcp-toolbox"/>
+    <meta http-equiv="refresh" content="0;url=https://cloud.google.com/alloydb/docs/create-database-with-mcp-toolbox"/>
+  </head>
+</html>
 
 # AlloyDB using MCP
 Connect your IDE to AlloyDB using Toolbox.
 
 <html>
   <head>
-    <link rel="canonical" href="https://cloud.google.com/alloydb/docs/pre-built-tools-with-mcp-toolbox"/>
-    <meta http-equiv="refresh" content="0;url=https://cloud.google.com/alloydb/docs/pre-built-tools-with-mcp-toolbox"/>
+    <link rel="canonical" href="https://cloud.google.com/alloydb/docs/connect-ide-using-mcp-toolbox"/>
+    <meta http-equiv="refresh" content="0;url=https://cloud.google.com/alloydb/docs/connect-ide-using-mcp-toolbox"/>
   </head>
 </html>
 
@@ -3786,19 +3466,19 @@ to expose your developer assistant tools to a Firestore instance:
    <!-- {x-release-please-start-version} -->
    {{< tabpane persist=header >}}
 {{< tab header="linux/amd64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/linux/amd64/toolbox
+curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/linux/amd64/toolbox
 {{< /tab >}}
 
 {{< tab header="darwin/arm64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/darwin/arm64/toolbox
+curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/darwin/arm64/toolbox
 {{< /tab >}}
 
 {{< tab header="darwin/amd64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/darwin/amd64/toolbox
+curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/darwin/amd64/toolbox
 {{< /tab >}}
 
 {{< tab header="windows/amd64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/windows/amd64/toolbox
+curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/windows/amd64/toolbox
 {{< /tab >}}
 {{< /tabpane >}}
     <!-- {x-release-please-end} -->
@@ -4101,19 +3781,19 @@ to expose your developer assistant tools to a Looker instance:
    <!-- {x-release-please-start-version} -->
 {{< tabpane persist=header >}}
 {{< tab header="linux/amd64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/linux/amd64/toolbox
+curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/linux/amd64/toolbox
 {{< /tab >}}
 
 {{< tab header="darwin/arm64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/darwin/arm64/toolbox
+curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/darwin/arm64/toolbox
 {{< /tab >}}
 
 {{< tab header="darwin/amd64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/darwin/amd64/toolbox
+curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/darwin/amd64/toolbox
 {{< /tab >}}
 
 {{< tab header="windows/amd64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/windows/amd64/toolbox.exe
+curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/windows/amd64/toolbox.exe
 {{< /tab >}}
 {{< /tabpane >}}
     <!-- {x-release-please-end} -->
@@ -4362,20 +4042,22 @@ Connect your IDE to MySQL using Toolbox.
 
 1.  Download the latest version of Toolbox as a binary. Select the [correct binary](https://github.com/googleapis/genai-toolbox/releases) corresponding to your OS and CPU architecture. You are required to use Toolbox version V0.10.0+:
 
+  <!-- {x-release-please-start-version} -->
     {{< tabpane persist="header" >}}
     {{< tab header="linux/amd64" lang="bash" >}}
-    curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/linux/amd64/toolbox
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/linux/amd64/toolbox
     {{< /tab >}}
     {{< tab header="darwin/arm64" lang="bash" >}}
-    curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/darwin/arm64/toolbox
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/darwin/arm64/toolbox
     {{< /tab >}}
     {{< tab header="darwin/amd64" lang="bash" >}}
-    curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/darwin/amd64/toolbox
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/darwin/amd64/toolbox
     {{< /tab >}}
     {{< tab header="windows/amd64" lang="bash" >}}
-    curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/windows/amd64/toolbox.exe
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/windows/amd64/toolbox.exe
     {{< /tab >}}
     {{< /tabpane >}}
+  <!-- {x-release-please-end} -->
 
 2.  Make the binary executable:
 
@@ -4660,19 +4342,19 @@ Omni](https://cloud.google.com/alloydb/omni/current/docs/overview).
    <!-- {x-release-please-start-version} -->
    {{< tabpane persist=header >}}
 {{< tab header="linux/amd64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/linux/amd64/toolbox
+curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/linux/amd64/toolbox
 {{< /tab >}}
 
 {{< tab header="darwin/arm64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/darwin/arm64/toolbox
+curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/darwin/arm64/toolbox
 {{< /tab >}}
 
 {{< tab header="darwin/amd64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/darwin/amd64/toolbox
+curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/darwin/amd64/toolbox
 {{< /tab >}}
 
 {{< tab header="windows/amd64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/windows/amd64/toolbox.exe
+curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/windows/amd64/toolbox.exe
 {{< /tab >}}
 {{< /tabpane >}}
     <!-- {x-release-please-end} -->
@@ -4925,26 +4607,26 @@ Connect your IDE to SQL Server using Toolbox.
 
 1.  [Create or select a SQL Server instance.](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
 
----
-
 ## Install MCP Toolbox
 
 1.  Download the latest version of Toolbox as a binary. Select the [correct binary](https://github.com/googleapis/genai-toolbox/releases) corresponding to your OS and CPU architecture. You are required to use Toolbox version V0.10.0+:
 
+  <!-- {x-release-please-start-version} -->
     {{< tabpane persist="header" >}}
     {{< tab header="linux/amd64" lang="bash" >}}
-    curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/linux/amd64/toolbox
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/linux/amd64/toolbox
     {{< /tab >}}
     {{< tab header="darwin/arm64" lang="bash" >}}
-    curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/darwin/arm64/toolbox
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/darwin/arm64/toolbox
     {{< /tab >}}
     {{< tab header="darwin/amd64" lang="bash" >}}
-    curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/darwin/amd64/toolbox
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/darwin/amd64/toolbox
     {{< /tab >}}
     {{< tab header="windows/amd64" lang="bash" >}}
-    curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/windows/amd64/toolbox.exe
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/windows/amd64/toolbox.exe
     {{< /tab >}}
     {{< /tabpane >}}
+  <!-- {x-release-please-end} -->
 
 2.  Make the binary executable:
 
@@ -4975,8 +4657,8 @@ Connect your IDE to SQL Server using Toolbox.
           "args": ["--prebuilt","mssql","--stdio"],
           "env": {
             "MSSQL_HOST": "",
-            "MSSQL_DATABASE": "",
             "MSSQL_PORT": "",
+            "MSSQL_DATABASE": "",
             "MSSQL_USER": "",
             "MSSQL_PASSWORD": ""
           }
@@ -5001,8 +4683,8 @@ Connect your IDE to SQL Server using Toolbox.
           "args": ["--prebuilt","mssql","--stdio"],
           "env": {
             "MSSQL_HOST": "",
-            "MSSQL_DATABASE": "",
             "MSSQL_PORT": "",
+            "MSSQL_DATABASE": "",
             "MSSQL_USER": "",
             "MSSQL_PASSWORD": ""
           }
@@ -5028,8 +4710,8 @@ Connect your IDE to SQL Server using Toolbox.
           "args": ["--prebuilt","mssql","--stdio"],
           "env": {
             "MSSQL_HOST": "",
-            "MSSQL_DATABASE": "",
             "MSSQL_PORT": "",
+            "MSSQL_DATABASE": "",
             "MSSQL_USER": "",
             "MSSQL_PASSWORD": ""
           }
@@ -5054,8 +4736,8 @@ Connect your IDE to SQL Server using Toolbox.
           "args": ["--prebuilt","mssql","--stdio"],
           "env": {
             "MSSQL_HOST": "",
-            "MSSQL_DATABASE": "",
             "MSSQL_PORT": "",
+            "MSSQL_DATABASE": "",
             "MSSQL_USER": "",
             "MSSQL_PASSWORD": ""
           }
@@ -5081,8 +4763,8 @@ Connect your IDE to SQL Server using Toolbox.
             "args": ["--prebuilt","cloud-sql-mssql","--stdio"],
             "env": {
               "MSSQL_HOST": "",
-              "MSSQL_DATABASE": "",
               "MSSQL_PORT": "",
+              "MSSQL_DATABASE": "",
               "MSSQL_USER": "",
               "MSSQL_PASSWORD": ""
             }
@@ -5106,8 +4788,8 @@ Connect your IDE to SQL Server using Toolbox.
           "args": ["--prebuilt","mssql","--stdio"],
           "env": {
             "MSSQL_HOST": "",
-            "MSSQL_DATABASE": "",
             "MSSQL_PORT": "",
+            "MSSQL_DATABASE": "",
             "MSSQL_USER": "",
             "MSSQL_PASSWORD": ""
           }
@@ -5130,8 +4812,8 @@ Connect your IDE to SQL Server using Toolbox.
           "args": ["--prebuilt","mssql","--stdio"],
           "env": {
             "MSSQL_HOST": "",
-            "MSSQL_DATABASE": "",
             "MSSQL_PORT": "",
+            "MSSQL_DATABASE": "",
             "MSSQL_USER": "",
             "MSSQL_PASSWORD": ""
           }
@@ -5155,8 +4837,8 @@ Connect your IDE to SQL Server using Toolbox.
           "args": ["--prebuilt","mssql","--stdio"],
           "env": {
             "MSSQL_HOST": "",
-            "MSSQL_DATABASE": "",
             "MSSQL_PORT": "",
+            "MSSQL_DATABASE": "",
             "MSSQL_USER": "",
             "MSSQL_PASSWORD": ""
           }
@@ -5354,6 +5036,110 @@ testing and debugging Toolbox server.
 | Cursor | ✅ | <https://docs.cursor.com/context/model-context-protocol> |
 | Windsurf | ✅ | <https://docs.windsurf.com/windsurf/mcp> |
 | VS Code (Insiders) | ✅ | <https://code.visualstudio.com/docs/copilot/chat/mcp-servers> |
+
+
+# Toolbox UI
+How to effectively use Toolbox UI.
+
+
+Toolbox UI is a built-in web interface that allows users to visually inspect and test out configured resources such as tools and toolsets.
+
+## Launching Toolbox UI
+
+To launch Toolbox's interactive UI, use the `--ui` flag.
+
+```sh
+./toolbox --ui
+```
+
+Toolbox UI will be served from the same host and port as the Toolbox Server, with the `/ui` suffix. Once Toolbox
+is launched, the following INFO log with Toolbox UI's url will be shown:
+
+```bash
+INFO "Toolbox UI is up and running at: http://localhost:5000/ui"
+```
+
+## Navigating the Tools Page
+
+The tools page shows all tools loaded from your configuration file. This corresponds to the default toolset (represented by an empty string). Each tool's name on this page will exactly match its name in the configuration 
+file.
+
+To view details for a specific tool, click on the tool name. The main content area will be populated
+with the tool name, description, and available parameters.
+
+![Tools Page](./tools.png)
+
+### Invoking a Tool
+
+1. Click on a Tool
+2. Enter appropriate parameters in each parameter field
+3. Click "Run Tool"
+4. Done! Your results will appear in the response field
+5. (Optional) Uncheck "Prettify JSON" to format the response as plain text
+
+![Run Tool Demo GIF](./run-tool.gif)
+
+### Optional Parameters
+
+Toolbox allows users to add [optional parameters](../../resources/tools/#basic-parameters) with or without a default value. 
+
+To exclude a parameter, uncheck the box to the right of an associated parameter, and that parameter will not be
+included in the request body. If the parameter is not sent, Toolbox will either use it as `nil` value or the `default` value, if configured. If the parameter is required, Toolbox will throw an error.
+
+When the box is checked, parameter will be sent exactly as entered in the response field (e.g. empty string).
+
+![Optional Parameter checked example](./optional-param-checked.png)
+
+![Optional Parameter unchecked example](./optional-param-unchecked.png)
+
+### Editing Headers
+
+To edit headers, press the "Edit Headers" button to display the header modal. Within this modal,
+users can make direct edits by typing into the header's text area. 
+
+Toolbox UI validates that the headers are in correct JSON format. Other header-related errors (e.g.,
+incorrect header names or values required by the tool) will be reported in the Response section 
+after running the tool.
+
+![Edit Headers](./edit-headers.png)
+
+#### Google OAuth
+
+Currently, Toolbox supports Google OAuth 2.0 as an AuthService, which allows tools to utilize 
+authorized parameters. When a tool uses an authorized parameter, the parameter will be displayed
+but not editable, as it will be populated from the authentication token.  
+
+To provide the token, add your Google OAuth ID Token to the request header using the "Edit Headers"
+button and modal described above. The key should be the name of your AuthService as defined in 
+your tool configuration file, suffixed with `_token`. The value should be your ID token as a string.
+
+1. Select a tool that requires [authenticated parameters]()
+2. The auth parameter's text field is greyed out. This is because it cannot be entered manually and will
+be parsed from the resolved auth token
+3. To update request headers with the token, select "Edit Headers"
+4. Checkout the dropdown "How to extract Google OAuth ID Token manually" for guidance on retrieving ID token
+5. Paste the request header
+6. Click "Save"
+7. Click "Run Tool"
+
+```json
+{
+  "Content-Type": "application/json",
+  "my-google-auth_token": "YOUR_ID_TOKEN_HERE"
+}
+```
+
+![Using Authenticated Parameter GIF](./edit-headers.gif)
+
+## Navigating the Toolsets Page
+
+Through the toolsets page, users can search for a specific toolset to retrieve tools from. Simply
+enter the toolset name in the search bar, and press "Enter" to retrieve the associated tools.
+
+If the toolset name is not defined within the tools configuration file, an error message will be 
+displayed.
+
+![Toolsets Page](./toolsets.png)
 
 
 # Deploy to Cloud Run
@@ -8787,7 +8573,7 @@ to use BigQuery, and then run the Toolbox server.
     <!-- {x-release-please-start-version} -->
     ```bash
     export OS="linux/amd64" # one of linux/amd64, darwin/arm64, darwin/amd64, or windows/amd64
-    curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/$OS/toolbox
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/$OS/toolbox
     ```
     <!-- {x-release-please-end} -->
 
@@ -9421,7 +9207,7 @@ In this section, we will download Toolbox, configure our tools in a
     <!-- {x-release-please-start-version} -->
     ```bash
     export OS="linux/amd64" # one of linux/amd64, darwin/arm64, darwin/amd64, or windows/amd64
-    curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/$OS/toolbox
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/$OS/toolbox
     ```
     <!-- {x-release-please-end} -->
 
@@ -9601,7 +9387,7 @@ In this section, we will download Toolbox and run the Toolbox server.
     <!-- {x-release-please-start-version} -->
     ```bash
     export OS="linux/amd64" # one of linux/amd64, darwin/arm64, darwin/amd64, or windows/amd64
-    curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/$OS/toolbox
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/$OS/toolbox
     ```
     <!-- {x-release-please-end} -->
 
@@ -9711,7 +9497,7 @@ In this section, we will download Toolbox and run the Toolbox server.
     <!-- {x-release-please-start-version} -->
     ```bash
     export OS="linux/amd64" # one of linux/amd64, darwin/arm64, darwin/amd64, or windows/amd64
-    curl -O https://storage.googleapis.com/genai-toolbox/v0.10.0/$OS/toolbox
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/$OS/toolbox
     ```
     <!-- {x-release-please-end} -->
 
