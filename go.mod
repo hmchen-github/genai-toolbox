@@ -1,6 +1,6 @@
 module github.com/googleapis/genai-toolbox
 
-go 1.23.8
+go 1.24.2
 
 toolchain go1.24.4
 
@@ -24,12 +24,14 @@ require (
 	github.com/goccy/go-yaml v1.18.0
 	github.com/google/go-cmp v0.7.0
 	github.com/google/uuid v1.6.0
+	github.com/googleapis/mcp-toolbox-sdk-go v0.2.0
 	github.com/jackc/pgx/v5 v5.7.5
 	github.com/json-iterator/go v1.1.12
 	github.com/microsoft/go-mssqldb v1.9.2
 	github.com/neo4j/neo4j-go-driver/v5 v5.28.1
 	github.com/redis/go-redis/v9 v9.11.0
 	github.com/spf13/cobra v1.9.1
+	github.com/tmc/langchaingo v0.1.13
 	github.com/valkey-io/valkey-go v1.0.62
 	go.opentelemetry.io/contrib/propagators/autoprop v0.61.0
 	go.opentelemetry.io/otel v1.36.0
@@ -40,7 +42,7 @@ require (
 	go.opentelemetry.io/otel/sdk/metric v1.36.0
 	go.opentelemetry.io/otel/trace v1.36.0
 	golang.org/x/oauth2 v0.30.0
-	google.golang.org/api v0.240.0
+	google.golang.org/api v0.242.0
 	modernc.org/sqlite v1.38.0
 )
 
@@ -49,6 +51,8 @@ require golang.org/x/exp v0.0.0-20250408133849-7e4ce0ab07d0 // indirect
 require (
 	cel.dev/expr v0.23.0 // indirect
 	cloud.google.com/go v0.121.2 // indirect
+	cloud.google.com/go/ai v0.7.0 // indirect
+	cloud.google.com/go/aiplatform v1.85.0 // indirect
 	cloud.google.com/go/alloydb v1.16.1 // indirect
 	cloud.google.com/go/auth v0.16.2 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
@@ -57,6 +61,7 @@ require (
 	cloud.google.com/go/longrunning v0.6.7 // indirect
 	cloud.google.com/go/monitoring v1.24.2 // indirect
 	cloud.google.com/go/trace v1.11.6 // indirect
+	cloud.google.com/go/vertexai v0.12.0 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/GoogleCloudPlatform/grpc-gcp-go/grpcgcp v1.5.3 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.27.0 // indirect
@@ -74,12 +79,13 @@ require (
 	github.com/couchbase/tools-common/errors v1.0.0 // indirect
 	github.com/couchbaselabs/gocbconnstr/v2 v2.0.0-20240607131231-fb385523de28 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
+	github.com/dlclark/regexp2 v1.10.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/envoyproxy/go-control-plane/envoy v1.32.4 // indirect
 	github.com/envoyproxy/protoc-gen-validate v1.2.1 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
-	github.com/go-jose/go-jose/v4 v4.0.5 // indirect
+	github.com/go-jose/go-jose/v4 v4.1.0 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
@@ -90,6 +96,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/flatbuffers v23.5.26+incompatible // indirect
+	github.com/google/generative-ai-go v0.15.1 // indirect
 	github.com/google/s2a-go v0.1.9 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.6 // indirect
 	github.com/googleapis/gax-go/v2 v2.14.2 // indirect
@@ -100,7 +107,7 @@ require (
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
-	github.com/klauspost/compress v1.16.7 // indirect
+	github.com/klauspost/compress v1.17.6 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.5 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
@@ -108,6 +115,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/ncruces/go-strftime v0.1.9 // indirect
 	github.com/pierrec/lz4/v4 v4.1.18 // indirect
+	github.com/pkoukk/tiktoken-go v0.1.6 // indirect
 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/spf13/pflag v1.0.6 // indirect

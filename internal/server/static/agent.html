@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Toolbox Chat</title>
+  <link rel="stylesheet" href="/ui/css/style.css" />
+  <style>
+    #chat-log { padding: 1rem; max-height: 80vh; overflow-y: auto; }
+    .user       { text-align: right;  color: #007bff; margin: .5rem 0; }
+    .assistant  { text-align: left;   color: #333;    margin: .5rem 0; }
+    .tool_call  { font-style: italic; color: #555; }
+    .tool_resp  { font-family: monospace; white-space: pre; background:#fafafa; padding:.25rem }
+  </style>
+</head>
+<body>
+  <div id="navbar-container" data-active-nav=""></div>
+
+  <div id="chat-log"></div>
+
+  <form id="chat-form" style="padding:1rem;display:flex;gap:.5rem">
+    <input id="msg" style="flex:1" placeholder="Ask me anything…" autocomplete="off" />
+    <button type="submit">Send</button>
+  </form>
+
+  <script src="/ui/js/navbar.js"></script>
+  <script type="module" src="/ui/js/agent.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () =>
+      renderNavbar('navbar-container', '')
+    );
+  </script>
+</body>
+</html>
