@@ -42,7 +42,7 @@ steps:
         path: '/gopath'
     script: |
         #!/usr/bin/env bash
-        CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+        CGO_ENABLED=1 GOOS=linux GOARCH=amd64 \
           go build -ldflags "-X github.com/googleapis/genai-toolbox/cmd.commitSha=$(git rev-parse HEAD)" -o toolbox.linux.amd64
 
   - id: "store-linux-amd64"
@@ -64,7 +64,7 @@ steps:
         path: '/gopath'
     script: |
         #!/usr/bin/env bash
-        CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 \
+        CGO_ENABLED=1 GOOS=darwin GOARCH=arm64 \
           go build -ldflags "-X github.com/googleapis/genai-toolbox/cmd.commitSha=$(git rev-parse HEAD)" -o toolbox.darwin.arm64
 
   - id: "store-darwin-arm64"
@@ -86,7 +86,7 @@ steps:
         path: '/gopath'
     script: |
         #!/usr/bin/env bash
-        CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 \
+        CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 \
           go build -ldflags "-X github.com/googleapis/genai-toolbox/cmd.commitSha=$(git rev-parse HEAD)" -o toolbox.darwin.amd64
 
   - id: "store-darwin-amd64"
@@ -108,7 +108,7 @@ steps:
         path: '/gopath'
     script: |
         #!/usr/bin/env bash
-        CGO_ENABLED=0 GOOS=windows GOARCH=amd64 \
+        CGO_ENABLED=1 GOOS=windows GOARCH=amd64 \
           go build -ldflags "-X github.com/googleapis/genai-toolbox/cmd.commitSha=$(git rev-parse HEAD)" -o toolbox.windows.amd64
 
   - id: "store-windows-amd64"
