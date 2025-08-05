@@ -23,6 +23,9 @@ ARG TARGETARCH
 ARG BUILD_TYPE="container.dev"
 ARG COMMIT_SHA=""
 
+RUN apt-get update && \
+    apt install -y clang && \
+    rm -rf /var/lib/apt/lists/*
 RUN go get ./...
 RUN CGO_ENABLED=1 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
     go build -ldflags "-X github.com/googleapis/genai-toolbox/cmd.buildType=container.${BUILD_TYPE} -X github.com/googleapis/genai-toolbox/cmd.commitSha=${COMMIT_SHA}"
@@ -34,4 +37,4 @@ WORKDIR /app
 COPY --from=build --chown=nonroot /go/src/genai-toolbox/genai-toolbox /toolbox
 USER nonroot
 
-ENTRYPOINT ["/toolbox"] 
+ENTRYPOINT ["/toolbox"]

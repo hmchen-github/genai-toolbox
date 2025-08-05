@@ -29,6 +29,7 @@ steps:
       - name: "go"
         path: "/gopath"
     script: |
+      apt-get install -y clang
       go get -d ./...
 
   - id: "build-linux-amd64"
