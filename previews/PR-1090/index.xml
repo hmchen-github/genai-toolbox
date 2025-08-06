@@ -1716,7 +1716,7 @@ Looker so the query can be investigated further.&lt;/p>
 &lt;li>an optional set of &lt;code>sorts&lt;/code>&lt;/li>
 &lt;li>an optional &lt;code>limit&lt;/code>&lt;/li>
 &lt;li>an optional &lt;code>tz&lt;/code>&lt;/li>
-&lt;li>an option &lt;code>vis_config&lt;/code>&lt;/li>
+&lt;li>an optional &lt;code>vis_config&lt;/code>&lt;/li>
 &lt;/ol>
 &lt;h2 id="example">Example&lt;/h2>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">tools&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
