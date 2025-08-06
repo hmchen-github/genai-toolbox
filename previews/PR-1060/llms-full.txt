@@ -734,7 +734,7 @@ postgres` and a password next time.
 
     ```sql
     INSERT INTO hotels(id, name, location, price_tier, checkin_date, checkout_date, booked)
-    VALUES 
+    VALUES
       (1, 'Hilton Basel', 'Basel', 'Luxury', '2024-04-22', '2024-04-20', B'0'),
       (2, 'Marriott Zurich', 'Zurich', 'Upscale', '2024-04-14', '2024-04-21', B'0'),
       (3, 'Hyatt Regency Basel', 'Basel', 'Upper Upscale', '2024-04-02', '2024-04-20', B'0'),
@@ -1409,7 +1409,7 @@ postgres` and a password next time.
 
     ```sql
     INSERT INTO hotels(id, name, location, price_tier, checkin_date, checkout_date, booked)
-    VALUES 
+    VALUES
       (1, 'Hilton Basel', 'Basel', 'Luxury', '2024-04-22', '2024-04-20', B'0'),
       (2, 'Marriott Zurich', 'Zurich', 'Upscale', '2024-04-14', '2024-04-21', B'0'),
       (3, 'Hyatt Regency Basel', 'Basel', 'Upper Upscale', '2024-04-02', '2024-04-20', B'0'),
@@ -1742,14 +1742,14 @@ async function run() {
           }
         })
       );
-      
+
       conversationHistory.push(...toolResponses);
-      
+
       // Call the AI again with the tool results.
       response = await ai.generate({ messages: conversationHistory, tools });
       conversationHistory.push(response.message);
     }
-    
+
     console.log(response.text);
   }
 }
@@ -4042,25 +4042,25 @@ Connect your IDE to MySQL using Toolbox.
 
 1.  Download the latest version of Toolbox as a binary. Select the [correct binary](https://github.com/googleapis/genai-toolbox/releases) corresponding to your OS and CPU architecture. You are required to use Toolbox version V0.10.0+:
 
-   <!-- {x-release-please-start-version} -->
-{{< tabpane persist=header >}}
-{{< tab header="linux/amd64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/linux/amd64/toolbox
-{{< /tab >}}
+      <!-- {x-release-please-start-version} -->
+    {{< tabpane persist=header >}}
+    {{< tab header="linux/amd64" lang="bash" >}}
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/linux/amd64/toolbox
+    {{< /tab >}}
 
-{{< tab header="darwin/arm64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/darwin/arm64/toolbox
-{{< /tab >}}
+    {{< tab header="darwin/arm64" lang="bash" >}}
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/darwin/arm64/toolbox
+    {{< /tab >}}
 
-{{< tab header="darwin/amd64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/darwin/amd64/toolbox
-{{< /tab >}}
+    {{< tab header="darwin/amd64" lang="bash" >}}
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/darwin/amd64/toolbox
+    {{< /tab >}}
 
-{{< tab header="windows/amd64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/windows/amd64/toolbox.exe
-{{< /tab >}}
-{{< /tabpane >}}
-    <!-- {x-release-please-end} -->
+    {{< tab header="windows/amd64" lang="bash" >}}
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/windows/amd64/toolbox.exe
+    {{< /tab >}}
+    {{< /tabpane >}}
+        <!-- {x-release-please-end} -->
 
 2.  Make the binary executable:
 
@@ -4614,33 +4614,33 @@ Connect your IDE to SQL Server using Toolbox.
 
 1.  Download the latest version of Toolbox as a binary. Select the [correct binary](https://github.com/googleapis/genai-toolbox/releases) corresponding to your OS and CPU architecture. You are required to use Toolbox version V0.10.0+:
 
-   <!-- {x-release-please-start-version} -->
-{{< tabpane persist=header >}}
-{{< tab header="linux/amd64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/linux/amd64/toolbox
-{{< /tab >}}
+      <!-- {x-release-please-start-version} -->
+    {{< tabpane persist=header >}}
+    {{< tab header="linux/amd64" lang="bash" >}}
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/linux/amd64/toolbox
+    {{< /tab >}}
 
-{{< tab header="darwin/arm64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/darwin/arm64/toolbox
-{{< /tab >}}
+    {{< tab header="darwin/arm64" lang="bash" >}}
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/darwin/arm64/toolbox
+    {{< /tab >}}
 
-{{< tab header="darwin/amd64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/darwin/amd64/toolbox
-{{< /tab >}}
+    {{< tab header="darwin/amd64" lang="bash" >}}
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/darwin/amd64/toolbox
+    {{< /tab >}}
 
-{{< tab header="windows/amd64" lang="bash" >}}
-curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/windows/amd64/toolbox.exe
-{{< /tab >}}
-{{< /tabpane >}}
-    <!-- {x-release-please-end} -->
+    {{< tab header="windows/amd64" lang="bash" >}}
+    curl -O https://storage.googleapis.com/genai-toolbox/v0.11.0/windows/amd64/toolbox.exe
+    {{< /tab >}}
+    {{< /tabpane >}}
+        <!-- {x-release-please-end} -->
 
-2.  Make the binary executable:
+1.  Make the binary executable:
 
     ```bash
     chmod +x toolbox
     ```
 
-3.  Verify the installation:
+1.  Verify the installation:
 
     ```bash
     ./toolbox --version
@@ -6105,6 +6105,14 @@ cluster][alloydb-free-trial].
 - [`postgres-execute-sql`](../tools/postgres/postgres-execute-sql.md)  
   Run parameterized SQL statements in AlloyDB Postgres.
 
+### Pre-built Configurations
+
+- [AlloyDB using MCP](https://googleapis.github.io/genai-toolbox/how-to/connect-ide/alloydb_pg_mcp/)  
+Connect your IDE to AlloyDB using Toolbox.
+
+- [AlloyDB Admin API using MCP](https://googleapis.github.io/genai-toolbox/how-to/connect-ide/alloydb_pg_admin_mcp/)  
+Create your AlloyDB database with MCP Toolbox.
+
 ## Requirements
 
 ### IAM Permissions
@@ -6254,6 +6262,11 @@ avoiding full table scans or complex filters.
 - [`bigquery-list-table-ids`](../tools/bigquery/bigquery-list-table-ids.md)  
   List tables in a given dataset.
 
+### Pre-built Configurations
+
+- [BigQuery using MCP](https://googleapis.github.io/genai-toolbox/how-to/connect-ide/bigquery_mcp/)  
+Connect your IDE to BigQuery using Toolbox.
+
 ## Requirements
 
 ### IAM Permissions
@@ -6389,6 +6402,11 @@ to a database by following these instructions][csql-mysql-quickstart].
 - [`mysql-execute-sql`](../tools/mysql/mysql-execute-sql.md)  
   Run parameterized SQL queries in Cloud SQL for MySQL.
 
+### Pre-built Configurations
+
+- [Cloud SQL for MySQL using MCP](https://googleapis.github.io/genai-toolbox/how-to/connect-ide/cloud_sql_mysql_mcp/)  
+Connect your IDE to Cloud SQL for MySQL using Toolbox.
+
 ## Requirements
 
 ### IAM Permissions
@@ -6495,6 +6513,12 @@ to a database by following these instructions][csql-pg-quickstart].
 
 - [`postgres-execute-sql`](../tools/postgres/postgres-execute-sql.md)  
   Run parameterized SQL statements in PostgreSQL.
+
+### Pre-built Configurations
+
+- [Cloud SQL for Postgres using MCP](https://googleapis.github.io/genai-toolbox/how-to/connect-ide/cloud_sql_pg_mcp/)  
+Connect your IDE to Cloud SQL for Postgres using Toolbox.
+
 
 ## Requirements
 
@@ -6626,6 +6650,11 @@ to a database by following these instructions][csql-mssql-connect].
 
 - [`mssql-execute-sql`](../tools/mssql/mssql-execute-sql.md)  
   Run parameterized SQL Server queries in Cloud SQL for SQL Server.
+
+### Pre-built Configurations
+
+- [Cloud SQL for SQL Server using MCP](https://googleapis.github.io/genai-toolbox/how-to/connect-ide/cloud_sql_mssql_mcp/)  
+Connect your IDE to Cloud SQL for SQL Server using Toolbox.
 
 ## Requirements
 
@@ -7122,75 +7151,6 @@ instead of hardcoding your secrets into the configuration file.
 | namespace   |  uint64  |     false    | Dgraph namespace (not required for Dgraph Cloud Shared Clusters).                                |
 
 
-# DuckDB
-DuckDB is an in-process SQL OLAP database management system designed for analytical query processing.
-
-
-## About
-
-[DuckDB](https://duckdb.org/) is an embedded analytical database management system that runs in-process with the client application. It is optimized for analytical workloads, providing high performance for complex queries with minimal setup.
-
-DuckDB has the following notable characteristics:
-
-- In-process, serverless database engine
-- Supports complex SQL queries for analytical processing
-- Can operate on in-memory or persistent storage
-- Zero-configuration - no external dependencies or server setup required
-- Highly optimized for columnar data storage and query execution
-
-For more details, refer to the [DuckDB Documentation](https://duckdb.org/).
-
-## Available Tools
-- [`duckdb-sql`](../tools/duckdb/duckdb-sql.md)  
-  Execute pre-defined prepared SQL queries in DuckDB.
-  
-## Requirements
-
-### Database File
-
-To use DuckDB, you can either:
-
-- Specify a file path for a persistent database stored on the filesystem
-- Omit the file path to use an in-memory database
-
-## Example
-
-For a persistent DuckDB database:
-
-```yaml
-sources:
-    my-duckdb:
-        kind: "duckdb"
-        dbFilePath: "/path/to/database.db"
-        configuration:
-            memory_limit: "2GB"
-            threads: "4"
-```
-
-For an in-memory DuckDB database:
-
-```yaml
-sources:
-    my-duckdb-memory:
-        name: "my-duckdb-memory"
-        kind: "duckdb"
-```
-
-## Reference
-
-### Configuration Fields
-
-| **field**         | **type**          | **required** | **description**                                                                 |
-|-------------------|:-----------------:|:------------:|---------------------------------------------------------------------------------|
-| kind              | string            |     true     | Must be "duckdb".                                                               |
-| dbFilePath        | string            |    false     | Path to the DuckDB database file. Omit for an in-memory database.                |
-| configuration     | map[string]string |    false     | Additional DuckDB configuration options (e.g., `memory_limit`, `threads`).       |
-
-For a complete list of available configuration options, refer to the [DuckDB Configuration Documentation](https://duckdb.org/docs/stable/configuration/overview.html#local-configuration-options).
-
-
-For more details on the Go implementation, see the [go-duckdb package documentation](https://pkg.go.dev/github.com/scottlepp/go-duckdb#section-readme).
-
 # Firestore
 Firestore is a NoSQL document database built for automatic scaling, high performance, and ease of application development. It's a fully managed, serverless database that supports mobile, web, and server development.
 
@@ -7547,6 +7507,11 @@ reputation for reliability, feature robustness, and performance.
 - [`postgres-execute-sql`](../tools/postgres/postgres-execute-sql.md)  
   Run parameterized SQL statements in PostgreSQL.
 
+### Pre-built Configurations
+
+- [PostgreSQL using MCP](https://googleapis.github.io/genai-toolbox/how-to/connect-ide/postgres_mcp/)  
+Connect your IDE to PostgreSQL using Toolbox.
+
 ## Requirements
 
 ### Database User
@@ -7710,6 +7675,11 @@ the Google Cloud console][spanner-quickstart].
 
 - [`spanner-execute-sql`](../tools/spanner/spanner-execute-sql.md)  
   Run structured and parameterized queries on Spanner.
+
+### Pre-built Configurations
+
+- [Spanner using MCP](https://googleapis.github.io/genai-toolbox/how-to/connect-ide/spanner_mcp/)  
+Connect your IDE to Spanner using Toolbox.
 
 ## Requirements
 
@@ -8316,11 +8286,6 @@ Tools that work with Dataplex Sources.
 
 # Dgraph
 Tools that work with Dgraph Sources.
-
-
-
-# DuckDB
-Tools that work with DuckDB Sources.
 
 
 
@@ -9684,7 +9649,7 @@ In this section, we will download and install the Toolbox binary.
     <!-- {x-release-please-start-version} -->
     ```bash
     export OS="linux/amd64" # one of linux/amd64, darwin/arm64, darwin/amd64, or windows/amd64
-    export VERSION="0.10.0"
+    export VERSION="0.11.0"
     curl -O https://storage.googleapis.com/genai-toolbox/v$VERSION/$OS/toolbox
     ```
     <!-- {x-release-please-end} -->
