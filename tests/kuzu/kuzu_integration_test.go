@@ -78,7 +78,10 @@ func initKuzuDbConnection() error {
 }
 
 func TestKuzuDbToolEndpoints(t *testing.T) {
-	initKuzuDbConnection()
+	err := initKuzuDbConnection()
+	if err != nil {
+		t.Fatalf("could not create kuzudb connection")
+	}
 	defer os.Remove(database)
 	defer os.Remove(fmt.Sprintf("%s.lock", database))
 	defer os.Remove(fmt.Sprintf("%s.wal", database))
@@ -110,7 +113,7 @@ func TestKuzuDbToolEndpoints(t *testing.T) {
 func createParamQueries() (string, string, string) {
 	toolStatement := "match (u:user {name:$name}) return u.age, u.name"
 	toolStatement2 := "match (a:user)-[:follows {since:$year}]->(b:user) return a.name, b.name"
-	authToolStatement := "match (u:user {name:$email}) return u.age, u.name"
+	authToolStatement := "match (u:user {email:$email}) return u.age, u.name"
 	return toolStatement, toolStatement2, authToolStatement
 }
 func createTemplateQueries() (string, string) {
@@ -297,7 +300,7 @@ func runToolInvokeTest(t *testing.T) {
 			api:           "http://127.0.0.1:5000/api/tool/my-auth-tool/invoke",
 			requestHeader: map[string]string{"my-google-auth_token": idToken},
 			requestBody:   bytes.NewBuffer([]byte(`{}`)),
-			want:          "[{\"name\":\"Alice\"}]",
+			want:          "[{\"u.age\":20,\"u.name\":\"Alice\"}]",
 			isErr:         false,
 		},
 		{
