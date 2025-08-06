@@ -191,6 +191,14 @@ body {
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     font-weight: bold;
     width: 100%;
+
+    &.active {
+        background-color: #d0d0d0;
+
+        &:hover {
+            background-color: #d0d0d0;
+        }
+    }
 }
 
 .tool-button {
@@ -720,6 +728,12 @@ body {
     background-color: #f9f9f9;
     border-radius: 8px;
     overflow-y: auto;
+
+    h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        color: var(--text-primary-gray);
+    }
 }
 
 #yaml-uploader {
@@ -748,17 +762,51 @@ body {
     margin-bottom: 10px;
 }
 
-.button-group {
+.yaml-output-container {
     display: flex;
-    gap: 8px;
-    padding: 5px;
+    flex-direction: column;
+    flex-grow: 1; 
+    min-height: 0; 
 }
 
-#yaml-editor-area > h3 {
-     margin-top: 15px;
-     margin-bottom: 5px;
-     flex-shrink: 0;
-     color: var(--text-primary-gray);
+.editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+    flex-shrink: 0;
+
+    h3 {
+        margin: 0;
+        color: var(--text-primary-gray);
+    }
+}
+
+.header-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    color: var(--text-secondary-gray);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, color 0.2s ease;
+
+    &:hover {
+        background-color: #f0f0f0; 
+        color: var(--text-primary-gray);
+    }
+}
+
+.icon-button .material-icons {
+    font-size: 22px; 
 }
 
 #yamlOutput {
@@ -766,7 +814,6 @@ body {
     flex-grow: 1; 
     font-family: monospace;
     display: block;
-    margin-top: 5px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -774,12 +821,6 @@ body {
     overflow-y: auto; 
     box-sizing: border-box;
     min-height: 200px; 
-}
-
-#source-adder h3 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    color: var(--text-primary-gray);
 }
 
 #sourceTypeSelect {

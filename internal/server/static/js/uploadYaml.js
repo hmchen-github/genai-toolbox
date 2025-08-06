@@ -131,7 +131,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (clearSessionButton) {
-        clearSessionButton.addEventListener('click', clearSessionStorage);
+        clearSessionButton.addEventListener('click', () => {
+            if (confirm("Clear all content from the YAML editor? This cannot be undone.")) {
+                clearSessionStorage();
+                console.debug("User confirmed clearing session.");
+            } else {
+                console.debug("User cancelled clearing session.");
+            }
+        });
     }
 
     function getDownloadFilename() {

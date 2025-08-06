@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YAML Builder View</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="/ui/css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
 </head>
 <body>
-    <div id="navbar-container" data-active-nav=""></div>
+    <div id="navbar-container" data-active-nav="/ui/upload"></div>
     <div id="main-content-container">
         <div class="editor-container">
             <div id="yaml-editor-area">
@@ -18,18 +19,26 @@
                     <div id="controls">
                         <div> 
                             <input type="file" id="yamlFileInput" accept=".yaml,.yml" class="hidden-file-input">
-                            <label for="yamlFileInput" class="btn btn--download-yaml">Choose File</label>
-                        </div>
-                        <div class="button-group">
-                            <button id="clearSessionButton" class="btn btn--clear-yaml">Clear YAML</button>
-                            <button id="downloadYamlButton" class="btn btn--download-yaml">Download YAML</button>
+                            <label for="yamlFileInput" class="btn btn--run">Choose File</label>
                         </div>
                     </div>
                     <div id="fileError"></div>
                     <div id="loadedFileName"></div>
                 </div>
-                <h3>Formatted YAML Output:</h3>
-                <textarea id="yamlOutput" placeholder="Upload a YAML file or paste content here..."></textarea>
+                <div class="yaml-output-container">
+                    <div class="editor-header">
+                        <h3>Formatted YAML Output:</h3>
+                        <div class="header-actions">
+                            <button id="clearSessionButton" class="icon-button" title="Clear YAML">
+                                <i class="material-icons">delete</i>
+                            </button>
+                            <button id="downloadYamlButton" class="icon-button" title="Download YAML">
+                                <i class="material-icons">file_download</i>
+                            </button>
+                        </div>
+                    </div>
+                    <textarea id="yamlOutput" placeholder="Upload a YAML file or paste content here..."></textarea>
+                </div>
             </div>
 
             <div id="source-adder">
