@@ -43,7 +43,7 @@ func newConfig(ctx context.Context, name string, decoder *yaml.Decoder) (sources
 type Config struct {
 	Name              string `yaml:"name" validate:"required" `
 	Kind              string `yaml:"kind" validate:"required"`
-	Database          string `yaml:"database"`
+	Database          string `yaml:"database" default:":memory:"`
 	BufferPoolSize    uint64 `yaml:"bufferPoolSize"`
 	MaxNumThreads     uint64 `yaml:"maxNumThreads"`
 	EnableCompression bool   `yaml:"enableCompression"`
