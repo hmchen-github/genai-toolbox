@@ -139,6 +139,27 @@ my-http-tool:
         type: integer
 ```
 
+### Bearer Token
+
+Toolbox can automatically generate and add an OAuth2 bearer token to the
+`Authorization` header using Google Application Default Credentials.
+This is useful for authenticating with Google Cloud APIs.
+To enable this, set the `bearer` field to `true`:
+
+```yaml
+my-http-tool:
+    kind: http
+    source: my-http-source
+    method: GET
+    path: /some/google/cloud/api
+    description: A tool that calls a Google Cloud API
+    bearer: true
+```
+
+When `bearer` is `true`, Toolbox will obtain an OAuth2 token and set the
+`Authorization` header to `Bearer <token>`. This will override any static
+`Authorization` header you may have set in the `headers` field.
+
 ### Request body
 
 The request body payload is a string that supports parameter replacement
@@ -259,5 +280,6 @@ my-http-tool:
 | queryParams  | [parameters](../#specifying-parameters) |    false     | List of [parameters](../#specifying-parameters) that will be inserted into the query string.                                                                                                                            |
 | bodyParams   | [parameters](../#specifying-parameters) |    false     | List of [parameters](../#specifying-parameters) that will be inserted into the request body payload.                                                                                                                    |
 | headerParams | [parameters](../#specifying-parameters) |    false     | List of [parameters](../#specifying-parameters) that will be inserted as the request headers.                                                                                                                           |
+| bearer       |                  boolean                 |    false     | When `true`, automatically generates and adds an OAuth2 bearer token to the `Authorization` header using Google Application Default Credentials.                                                                     |
 
 [go-template-doc]: <https://pkg.go.dev/text/template#pkg-overview>
