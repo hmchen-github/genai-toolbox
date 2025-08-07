@@ -166,7 +166,8 @@ func (t Tool) Invoke(ctx context.Context, params tools.ParamValues) (any, error)
 	}
 
 	// Convert the document data from JSON format to Firestore format
-	documentData, err := util.JSONToFirestoreValue(documentDataRaw)
+	// The client is passed to handle referenceValue types
+	documentData, err := util.JSONToFirestoreValue(documentDataRaw, t.Client)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert document data: %w", err)
 	}

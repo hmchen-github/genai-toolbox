@@ -135,7 +135,7 @@ func TestJSONToFirestoreValue_ComplexDocument(t *testing.T) {
 	require.NoError(t, err)
 
 	// Convert to Firestore format
-	result, err := JSONToFirestoreValue(data)
+	result, err := JSONToFirestoreValue(data, nil)
 	require.NoError(t, err)
 
 	// Verify the result is a map
@@ -222,7 +222,7 @@ func TestJSONToFirestoreValue_IntegerFromString(t *testing.T) {
 		"integerValue": "1500",
 	}
 
-	result, err := JSONToFirestoreValue(data)
+	result, err := JSONToFirestoreValue(data, nil)
 	require.NoError(t, err)
 
 	intVal, ok := result.(int64)
@@ -318,7 +318,7 @@ func TestJSONToFirestoreValue_InvalidFormats(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := JSONToFirestoreValue(tt.input)
+			_, err := JSONToFirestoreValue(tt.input, nil)
 			if tt.wantErr {
 				assert.Error(t, err)
 				if tt.errMsg != "" {
