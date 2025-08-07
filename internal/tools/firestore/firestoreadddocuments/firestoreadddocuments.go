@@ -171,9 +171,6 @@ func (t Tool) Invoke(ctx context.Context, params tools.ParamValues) (any, error)
 		return nil, fmt.Errorf("failed to convert document data: %w", err)
 	}
 
-	// Convert any reference values to DocumentRef objects
-	documentData = util.ConvertDocumentReferences(documentData, t.Client)
-
 	// Get return document data flag
 	returnDocumentData := false
 	if val, ok := mapParams[returnDocumentDataKey].(bool); ok {

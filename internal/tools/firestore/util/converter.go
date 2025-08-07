@@ -25,7 +25,8 @@ import (
 
 // JSONToFirestoreValue converts a JSON value with type information to a Firestore-compatible value
 // The input should be a map with a single key indicating the type (e.g., "stringValue", "integerValue")
-func JSONToFirestoreValue(value interface{}) (interface{}, error) {
+// If a client is provided, referenceValue types will be converted to *firestore.DocumentRef
+func JSONToFirestoreValue(value interface{}, client *firestore.Client) (interface{}, error) {
 	if value == nil {
 		return nil, nil
 	}
@@ -105,7 +106,7 @@ func JSONToFirestoreValue(value interface{}) (interface{}, error) {
 						if values, ok := arrayMap["values"].([]interface{}); ok {
 							result := make([]interface{}, len(values))
 							for i, item := range values {
-								converted, err := JSONToFirestoreValue(item)
+								converted, err := JSONToFirestoreValue(item, client)
 								if err != nil {
 									return nil, fmt.Errorf("array item %d: %w", i, err)
 								}
@@ -121,7 +122,7 @@ func JSONToFirestoreValue(value interface{}) (interface{}, error) {
 						if fields, ok := mapMap["fields"].(map[string]interface{}); ok {
 							result := make(map[string]interface{})
 							for k, v := range fields {
-								converted, err := JSONToFirestoreValue(v)
+								converted, err := JSONToFirestoreValue(v, client)
 								if err != nil {
 									return nil, fmt.Errorf("map field %q: %w", k, err)
 								}
@@ -132,17 +133,23 @@ func JSONToFirestoreValue(value interface{}) (interface{}, error) {
 					}
 					return nil, fmt.Errorf("invalid map value format")
 				case "referenceValue":
-					// Convert to DocumentRef - requires client instance
-					// For now, return the path as string, caller needs to convert
-					return val, nil
+					// Convert to DocumentRef if client is provided
+					if strVal, ok := val.(string); ok {
+						if client != nil && isValidDocumentPath(strVal) {
+							return client.Doc(strVal), nil
+						}
+						// Return the path as string if no client or invalid path
+						return strVal, nil
+					}
+					return nil, fmt.Errorf("reference value must be a string")
 				default:
 					// If not a typed value, treat as regular map
-					return convertPlainMap(v)
+					return convertPlainMap(v, client)
 				}
 			}
 		}
 		// Regular map without type annotation
-		return convertPlainMap(v)
+		return convertPlainMap(v, client)
 	default:
 		// Plain values (for backward compatibility)
 		return value, nil
@@ -150,10 +157,10 @@ func JSONToFirestoreValue(value interface{}) (interface{}, error) {
 }
 
 // convertPlainMap converts a plain map to Firestore format
-func convertPlainMap(m map[string]interface{}) (map[string]interface{}, error) {
+func convertPlainMap(m map[string]interface{}, client *firestore.Client) (map[string]interface{}, error) {
 	result := make(map[string]interface{})
 	for k, v := range m {
-		converted, err := JSONToFirestoreValue(v)
+		converted, err := JSONToFirestoreValue(v, client)
 		if err != nil {
 			return nil, fmt.Errorf("field %q: %w", k, err)
 		}
@@ -198,28 +205,39 @@ func FirestoreValueToJSON(value interface{}) interface{} {
 	}
 }
 
-// ConvertDocumentReferences converts any reference value strings in the data to DocumentRef objects
-// This should be called after JSONToFirestoreValue for documents that contain references
-func ConvertDocumentReferences(data interface{}, client *firestore.Client) interface{} {
-	switch v := data.(type) {
-	case map[string]interface{}:
-		result := make(map[string]interface{})
-		for k, val := range v {
-			result[k] = ConvertDocumentReferences(val, client)
-		}
-		return result
-	case []interface{}:
-		result := make([]interface{}, len(v))
-		for i, item := range v {
-			result[i] = ConvertDocumentReferences(item, client)
-		}
-		return result
-	case string:
-		// Check if this might be a reference path
-		// This is a simple heuristic - you might want to make this more sophisticated
-		// or require explicit marking of reference values
-		return v
-	default:
-		return v
+// isValidDocumentPath checks if a string is a valid Firestore document path
+// Valid paths have an even number of segments (collection/doc/collection/doc...)
+func isValidDocumentPath(path string) bool {
+	if path == "" {
+		return false
 	}
+	
+	// Split the path by '/' and check if it has an even number of segments
+	segments := splitPath(path)
+	return len(segments) > 0 && len(segments)%2 == 0
+}
+
+// splitPath splits a path by '/' while handling empty segments correctly
+func splitPath(path string) []string {
+	if path == "" {
+		return []string{}
+	}
+	
+	var segments []string
+	segment := ""
+	for _, char := range path {
+		if char == '/' {
+			if segment != "" {
+				segments = append(segments, segment)
+				segment = ""
+			}
+		} else {
+			segment += string(char)
+		}
+	}
+	if segment != "" {
+		segments = append(segments, segment)
+	}
+	
+	return segments
 }
