@@ -65,9 +65,10 @@ type Config struct {
 	QueryParams  tools.Parameters  `yaml:"queryParams"`
 	BodyParams   tools.Parameters  `yaml:"bodyParams"`
 	HeaderParams tools.Parameters  `yaml:"headerParams"`
-	// Bearer, when true, automatically generates and adds an OAuth2 bearer token
-	// to the Authorization header using Google Application Default Credentials.
-	Bearer bool `yaml:"bearer"`
+	// GoogleCloudOAuth2, when true, automatically generates and adds a Google Cloud
+	// OAuth2 token to the Authorization header using Google Application
+	// Default Credentials.
+	GoogleCloudOAuth2 bool `yaml:"googleCloudOAuth2"`
 }
 
 // validate interface
@@ -182,7 +183,7 @@ func (cfg Config) Initialize(srcs map[string]sources.Source) (tools.Tool, error)
 		AllParams:          allParameters,
 		manifest:           tools.Manifest{Description: cfg.Description, Parameters: paramManifest, AuthRequired: cfg.AuthRequired},
 		mcpManifest:        mcpManifest,
-		Bearer:             cfg.Bearer,
+		GoogleCloudOAuth2:  cfg.GoogleCloudOAuth2,
 	}, nil
 }
 
@@ -201,13 +202,13 @@ type Tool struct {
 	Headers            map[string]string `yaml:"headers"`
 	DefaultQueryParams map[string]string `yaml:"defaultQueryParams"`
 
-	RequestBody  string           `yaml:"requestBody"`
-	PathParams   tools.Parameters `yaml:"pathParams"`
-	QueryParams  tools.Parameters `yaml:"queryParams"`
-	BodyParams   tools.Parameters `yaml:"bodyParams"`
-	HeaderParams tools.Parameters `yaml:"headerParams"`
-	AllParams    tools.Parameters `yaml:"allParams"`
-	Bearer       bool
+	RequestBody       string           `yaml:"requestBody"`
+	PathParams        tools.Parameters `yaml:"pathParams"`
+	QueryParams       tools.Parameters `yaml:"queryParams"`
+	BodyParams        tools.Parameters `yaml:"bodyParams"`
+	HeaderParams      tools.Parameters `yaml:"headerParams"`
+	AllParams         tools.Parameters `yaml:"allParams"`
+	GoogleCloudOAuth2 bool
 
 	Client      *http.Client
 	manifest    tools.Manifest
@@ -316,9 +317,9 @@ func (t Tool) Invoke(ctx context.Context, params tools.ParamValues) (any, error)
 		return nil, fmt.Errorf("error populating request headers: %s", err)
 	}
 
-	// If Bearer is true, generate an OAuth2 token and set the Authorization header.
+	// If GoogleCloudOAuth2 is true, generate an OAuth2 token and set the Authorization header.
 	// This will override any static Authorization header in the configuration.
-	if t.Bearer {
+	if t.GoogleCloudOAuth2 {
 		// This uses Application Default Credentials to generate an OAuth2 token.
 		// It assumes the tool is being run in an environment with appropriate credentials
 		// (e.g., a GCE VM, or with `gcloud auth application-default login`).
