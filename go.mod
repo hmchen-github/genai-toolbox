@@ -2,7 +2,7 @@ module github.com/googleapis/genai-toolbox
 
 go 1.24
 
-toolchain go1.24.5
+toolchain go1.24.6
 
 require (
 	cloud.google.com/go/alloydbconn v1.15.4
@@ -45,7 +45,7 @@ require (
 	go.opentelemetry.io/otel/sdk/metric v1.37.0
 	go.opentelemetry.io/otel/trace v1.37.0
 	golang.org/x/oauth2 v0.30.0
-	google.golang.org/api v0.245.0
+	google.golang.org/api v0.246.0
 	modernc.org/sqlite v1.38.2
 )
 
