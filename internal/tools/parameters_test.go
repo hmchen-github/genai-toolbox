@@ -1405,7 +1405,7 @@ func TestMcpManifest(t *testing.T) {
 					"foo-map-int": {
 						Type:                 "object",
 						Description:          "a map of ints",
-						AdditionalProperties: &tools.ParameterMcpManifest{Type: "integer", Description: ""},
+						AdditionalProperties: map[string]any{"type": "integer"},
 					},
 					"foo-map-any": {
 						Type:                 "object",
