@@ -204,7 +204,12 @@ resources.
   | style           | Update src code, with only formatting and whitespace updates (e.g. code formatter or linter changes). |
 
   Pull requests should always add scope whenever possible. The scope is
-  formatted as `<type>/<kind>`. For example, `sources/postgres`, or `tools/mssql-sql`.
+  formatted as `<scope-type>/<scope-kind>`. For example, `sources/postgres`, or
+  `tools/mssql-sql`. Ideally, **each PR covers only one scope**, if this is
+  inevitable, multiple scopes can be seaparated with a comma (e.g.
+  `sources/postgres,sources/alloydbpg`). If the PR covers multiple `scope-type`
+  (such as adding a new database), you can disregard the `scope-type`, e.g.
+  `feat(new-db): adding support for new-db source and tool`.
 
 * **PR Description:** PR description should **always** be included. It should
   include a concise description of the changes, it's impact, along with a
