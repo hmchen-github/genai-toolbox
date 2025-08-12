@@ -7694,23 +7694,24 @@ instead of hardcoding your secrets into the configuration file.
 
 ## Reference
 
-| **field** | **type** | **required** | **description**                                                        |
-|-----------|:--------:|:------------:|------------------------------------------------------------------------|
-| kind      |  string  |     true     | Must be "postgres".                                                    |
-| host      |  string  |     true     | IP address to connect to (e.g. "127.0.0.1")                            |
-| port      |  string  |     true     | Port to connect to (e.g. "5432")                                       |
-| database  |  string  |     true     | Name of the Postgres database to connect to (e.g. "my_db").            |
-| user      |  string  |     true     | Name of the Postgres user to connect as (e.g. "my-pg-user").           |
-| password  |  string  |     true     | Password of the Postgres user (e.g. "my-password").                    |
+|  **field**  |      **type**      | **required** | **description**                                                        |
+|-------------|:------------------:|:------------:|------------------------------------------------------------------------|
+| kind        |       string       |     true     | Must be "postgres".                                                    |
+| host        |       string       |     true     | IP address to connect to (e.g. "127.0.0.1")                            |
+| port        |       string       |     true     | Port to connect to (e.g. "5432")                                       |
+| database    |       string       |     true     | Name of the Postgres database to connect to (e.g. "my_db").            |
+| user        |       string       |     true     | Name of the Postgres user to connect as (e.g. "my-pg-user").           |
+| password    |       string       |     true     | Password of the Postgres user (e.g. "my-password").                    |
+| queryParams |  map[string]string |     false    | Raw query to be added to the db connection string.                     |
 
 
 # Redis
-Redis is an open-source, in-memory data structure store.
+Redis is a in-memory data structure store.
 
 
 ## About
 
-Redis is an open-source, in-memory data structure store, used as a database,
+Redis is a in-memory data structure store, used as a database,
 cache, and message broker. It supports data structures such as strings, hashes,
 lists, sets, sorted sets with range queries, bitmaps, hyperloglogs, and
 geospatial indexes with radius queries.
