@@ -26,7 +26,6 @@ import (
 	"github.com/googleapis/genai-toolbox/internal/sources"
 	bigqueryds "github.com/googleapis/genai-toolbox/internal/sources/bigquery"
 	"github.com/googleapis/genai-toolbox/internal/tools"
-	"github.com/googleapis/genai-toolbox/internal/util"
 	bigqueryrestapi "google.golang.org/api/bigquery/v2"
 	"google.golang.org/api/iterator"
 )
@@ -50,6 +49,8 @@ func newConfig(ctx context.Context, name string, decoder *yaml.Decoder) (tools.T
 type compatibleSource interface {
 	BigQueryClient() *bigqueryapi.Client
 	BigQueryRestService() *bigqueryrestapi.Service
+	BigQueryClientCreator() bigqueryds.BigqueryClientCreator
+	UseClientAuthorization() bool
 }
 
 // validate compatible sources are still compatible
@@ -126,14 +127,16 @@ func (cfg Config) Initialize(srcs map[string]sources.Source) (tools.Tool, error)
 
 	// finish tool setup
 	t := Tool{
-		Name:         cfg.Name,
-		Kind:         kind,
-		Parameters:   parameters,
-		AuthRequired: cfg.AuthRequired,
-		Client:       s.BigQueryClient(),
-		RestService:  s.BigQueryRestService(),
-		manifest:     tools.Manifest{Description: cfg.Description, Parameters: parameters.Manifest(), AuthRequired: cfg.AuthRequired},
-		mcpManifest:  mcpManifest,
+		Name:           cfg.Name,
+		Kind:           kind,
+		Parameters:     parameters,
+		AuthRequired:   cfg.AuthRequired,
+		UseClientOAuth: s.UseClientAuthorization(),
+		ClientCreator:  s.BigQueryClientCreator(),
+		Client:         s.BigQueryClient(),
+		RestService:    s.BigQueryRestService(),
+		manifest:       tools.Manifest{Description: cfg.Description, Parameters: parameters.Manifest(), AuthRequired: cfg.AuthRequired},
+		mcpManifest:    mcpManifest,
 	}
 	return t, nil
 }
@@ -142,14 +145,17 @@ func (cfg Config) Initialize(srcs map[string]sources.Source) (tools.Tool, error)
 var _ tools.Tool = Tool{}
 
 type Tool struct {
-	Name         string           `yaml:"name"`
-	Kind         string           `yaml:"kind"`
-	AuthRequired []string         `yaml:"authRequired"`
-	Parameters   tools.Parameters `yaml:"parameters"`
-	Client       *bigqueryapi.Client
-	RestService  *bigqueryrestapi.Service
-	manifest     tools.Manifest
-	mcpManifest  tools.McpManifest
+	Name           string           `yaml:"name"`
+	Kind           string           `yaml:"kind"`
+	AuthRequired   []string         `yaml:"authRequired"`
+	UseClientOAuth bool             `yaml:"useClientOAuth"`
+	Parameters     tools.Parameters `yaml:"parameters"`
+
+	Client        *bigqueryapi.Client
+	RestService   *bigqueryrestapi.Service
+	ClientCreator bigqueryds.BigqueryClientCreator
+	manifest      tools.Manifest
+	mcpManifest   tools.McpManifest
 }
 
 // Invoke runs the contribution analysis.
@@ -211,13 +217,18 @@ func (t Tool) Invoke(ctx context.Context, params tools.ParamValues, accessToken 
 		inputDataSource,
 	)
 
-	logger, err := util.LoggerFromContext(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("error getting logger: %s", err)
-	}
-	logger.DebugContext(ctx, "executing `%s` tool query: %s", kind, createModelSQL)
+	bqClient := t.Client
+	var err error
 
-	createModelQuery := t.Client.Query(createModelSQL)
+	// Initialize new client if using user OAuth token
+	if t.UseClientOAuth {
+		bqClient, _, err = t.ClientCreator(accessToken, false)
+		if err != nil {
+			return nil, fmt.Errorf("error creating client from OAuth access token: %w", err)
+		}
+	}
+
+	createModelQuery := bqClient.Query(createModelSQL)
 	createModelQuery.CreateSession = true
 	createModelJob, err := createModelQuery.Run(ctx)
 	if err != nil {
@@ -236,11 +247,9 @@ func (t Tool) Invoke(ctx context.Context, params tools.ParamValues, accessToken 
 		return nil, fmt.Errorf("failed to create a BigQuery session")
 	}
 	sessionID := status.Statistics.SessionInfo.SessionID
-	logger.DebugContext(ctx, "BigQuery session created", "sessionID", sessionID)
 	getInsightsSQL := fmt.Sprintf("SELECT * FROM ML.GET_INSIGHTS(MODEL %s)", modelID)
-	logger.DebugContext(ctx, "Executing ML.GET_INSIGHTS query in session", "query", getInsightsSQL, "sessionID", sessionID)
 
-	getInsightsQuery := t.Client.Query(getInsightsSQL)
+	getInsightsQuery := bqClient.Query(getInsightsSQL)
 	getInsightsQuery.QueryConfig.ConnectionProperties = []*bigquery.ConnectionProperty{
 		{Key: "session_id", Value: sessionID},
 	}
@@ -301,5 +310,5 @@ func (t Tool) Authorized(verifiedAuthServices []string) bool {
 }
 
 func (t Tool) RequiresClientAuthorization() bool {
-	return false
+	return t.UseClientOAuth
 }

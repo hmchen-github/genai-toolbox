@@ -428,6 +428,11 @@ func addBigQueryPrebuiltToolsConfig(t *testing.T, config map[string]any) map[str
 			"my-google-auth",
 		},
 	}
+	tools["my-client-auth-analyze-contribution-tool"] = map[string]any{
+		"kind":        "bigquery-analyze-contribution",
+		"source":      "my-client-auth-source",
+		"description": "Tool to analyze contribution with auth.",
+	}
 	tools["my-list-dataset-ids-tool"] = map[string]any{
 		"kind":        "bigquery-list-dataset-ids",
 		"source":      "my-instance",
@@ -1001,7 +1006,13 @@ func runBigQueryAnalyzeContributionToolInvokeTest(t *testing.T, tableName string
 		t.Fatalf("error getting Google ID token: %s", err)
 	}
 
-	historyDataTable := strings.ReplaceAll(tableName, "`", "")
+	// Get access token
+	accessToken, err := sources.GetIAMAccessToken(t.Context())
+	if err != nil {
+		t.Fatalf("error getting access token from ADC: %s", err)
+	}
+
+	dataTable := strings.ReplaceAll(tableName, "`", "")
 
 	invokeTcs := []struct {
 		name          string
@@ -1015,14 +1026,14 @@ func runBigQueryAnalyzeContributionToolInvokeTest(t *testing.T, tableName string
 			name:          "invoke my-analyze-contribution-tool without required params",
 			api:           "http://127.0.0.1:5000/api/tool/my-analyze-contribution-tool/invoke",
 			requestHeader: map[string]string{},
-			requestBody:   bytes.NewBuffer([]byte(fmt.Sprintf(`{"input_data": "%s"}`, historyDataTable))),
+			requestBody:   bytes.NewBuffer([]byte(fmt.Sprintf(`{"input_data": "%s"}`, dataTable))),
 			isErr:         true,
 		},
 		{
 			name:          "invoke my-analyze-contribution-tool with table",
 			api:           "http://127.0.0.1:5000/api/tool/my-analyze-contribution-tool/invoke",
 			requestHeader: map[string]string{},
-			requestBody:   bytes.NewBuffer([]byte(fmt.Sprintf(`{"input_data": "%s", "contribution_metric": "SUM(metric)", "is_test_col": "is_test", "dimension_id_cols": ["dim1", "dim2"]}`, historyDataTable))),
+			requestBody:   bytes.NewBuffer([]byte(fmt.Sprintf(`{"input_data": "%s", "contribution_metric": "SUM(metric)", "is_test_col": "is_test", "dimension_id_cols": ["dim1", "dim2"]}`, dataTable))),
 			want:          `"relative_difference"`,
 			isErr:         false,
 		},
@@ -1030,7 +1041,7 @@ func runBigQueryAnalyzeContributionToolInvokeTest(t *testing.T, tableName string
 			name:          "invoke my-auth-analyze-contribution-tool with auth token",
 			api:           "http://127.0.0.1:5000/api/tool/my-auth-analyze-contribution-tool/invoke",
 			requestHeader: map[string]string{"my-google-auth_token": idToken},
-			requestBody:   bytes.NewBuffer([]byte(fmt.Sprintf(`{"input_data": "%s", "contribution_metric": "SUM(metric)", "is_test_col": "is_test", "dimension_id_cols": ["dim1", "dim2"]}`, historyDataTable))),
+			requestBody:   bytes.NewBuffer([]byte(fmt.Sprintf(`{"input_data": "%s", "contribution_metric": "SUM(metric)", "is_test_col": "is_test", "dimension_id_cols": ["dim1", "dim2"]}`, dataTable))),
 			want:          `"relative_difference"`,
 			isErr:         false,
 		},
@@ -1038,7 +1049,30 @@ func runBigQueryAnalyzeContributionToolInvokeTest(t *testing.T, tableName string
 			name:          "invoke my-auth-analyze-contribution-tool with invalid auth token",
 			api:           "http://127.0.0.1:5000/api/tool/my-auth-analyze-contribution-tool/invoke",
 			requestHeader: map[string]string{"my-google-auth_token": "INVALID_TOKEN"},
-			requestBody:   bytes.NewBuffer([]byte(fmt.Sprintf(`{"input_data": "%s", "contribution_metric": "SUM(metric)", "is_test_col": "is_test", "dimension_id_cols": ["dim1", "dim2"]}`, historyDataTable))),
+			requestBody:   bytes.NewBuffer([]byte(fmt.Sprintf(`{"input_data": "%s", "contribution_metric": "SUM(metric)", "is_test_col": "is_test", "dimension_id_cols": ["dim1", "dim2"]}`, dataTable))),
+			isErr:         true,
+		},
+		{
+			name:          "Invoke my-client-auth-analyze-contribution-tool with auth token",
+			api:           "http://127.0.0.1:5000/api/tool/my-client-auth-analyze-contribution-tool/invoke",
+			requestHeader: map[string]string{"Authorization": accessToken},
+			requestBody:   bytes.NewBuffer([]byte(fmt.Sprintf(`{"input_data": "%s", "contribution_metric": "SUM(metric)", "is_test_col": "is_test", "dimension_id_cols": ["dim1", "dim2"]}`, dataTable))),
+			want:          `"relative_difference"`,
+			isErr:         false,
+		},
+		{
+			name:          "Invoke my-client-auth-analyze-contribution-tool without auth token",
+			api:           "http://127.0.0.1:5000/api/tool/my-client-auth-analyze-contribution-tool/invoke",
+			requestHeader: map[string]string{},
+			requestBody:   bytes.NewBuffer([]byte(fmt.Sprintf(`{"input_data": "%s", "contribution_metric": "SUM(metric)", "is_test_col": "is_test", "dimension_id_cols": ["dim1", "dim2"]}`, dataTable))),
+			isErr:         true,
+		},
+		{
+
+			name:          "Invoke my-client-auth-analyze-contribution-tool with invalid auth token",
+			api:           "http://127.0.0.1:5000/api/tool/my-client-auth-analyze-contribution-tool/invoke",
+			requestHeader: map[string]string{"Authorization": "Bearer invalid-token"},
+			requestBody:   bytes.NewBuffer([]byte(fmt.Sprintf(`{"input_data": "%s", "contribution_metric": "SUM(metric)", "is_test_col": "is_test", "dimension_id_cols": ["dim1", "dim2"]}`, dataTable))),
 			isErr:         true,
 		},
 	}
