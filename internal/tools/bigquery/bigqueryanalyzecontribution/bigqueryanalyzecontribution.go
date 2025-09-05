@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"strings"
 
-	"cloud.google.com/go/bigquery"
 	bigqueryapi "cloud.google.com/go/bigquery"
 	yaml "github.com/goccy/go-yaml"
 	"github.com/google/uuid"
@@ -201,7 +200,7 @@ func (t Tool) Invoke(ctx context.Context, params tools.ParamValues, accessToken 
 		options = append(options, fmt.Sprintf("PRUNING_METHOD = '%s'", upperVal))
 	}
 
-	inputDataSource := inputData
+	var inputDataSource string
 	trimmedUpperInputData := strings.TrimSpace(strings.ToUpper(inputData))
 	if strings.HasPrefix(trimmedUpperInputData, "SELECT") || strings.HasPrefix(trimmedUpperInputData, "WITH") {
 		inputDataSource = fmt.Sprintf("(%s)", inputData)
@@ -250,7 +249,7 @@ func (t Tool) Invoke(ctx context.Context, params tools.ParamValues, accessToken 
 	getInsightsSQL := fmt.Sprintf("SELECT * FROM ML.GET_INSIGHTS(MODEL %s)", modelID)
 
 	getInsightsQuery := bqClient.Query(getInsightsSQL)
-	getInsightsQuery.QueryConfig.ConnectionProperties = []*bigquery.ConnectionProperty{
+	getInsightsQuery.QueryConfig.ConnectionProperties = []*bigqueryapi.ConnectionProperty{
 		{Key: "session_id", Value: sessionID},
 	}
 
@@ -265,7 +264,7 @@ func (t Tool) Invoke(ctx context.Context, params tools.ParamValues, accessToken 
 
 	var out []any
 	for {
-		var row map[string]bigquery.Value
+		var row map[string]bigqueryapi.Value
 		err := it.Next(&row)
 		if err == iterator.Done {
 			break
