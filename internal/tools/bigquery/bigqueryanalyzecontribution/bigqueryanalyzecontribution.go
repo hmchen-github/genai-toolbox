@@ -102,8 +102,8 @@ func (cfg Config) Initialize(srcs map[string]sources.Source) (tools.Tool, error)
 		The categorical column must have type BOOL, DATE, DATETIME, TIME, TIMESTAMP, STRING, or INT64.`)
 	isTestColParameter := tools.NewStringParameter("is_test_col",
 		"The name of the column that identifies whether a row is in the test or control group.")
-	dimensionIDColsParameter := tools.NewArrayParameter("dimension_id_cols",
-		"An array of column names that uniquely identify each dimension.", tools.NewStringParameter("dimension_id_col", "A dimension column name."))
+	dimensionIDColsParameter := tools.NewArrayParameterWithRequired("dimension_id_cols",
+		"An array of column names that uniquely identify each dimension.", false, tools.NewStringParameter("dimension_id_col", "A dimension column name."))
 	topKInsightsParameter := tools.NewIntParameterWithDefault("top_k_insights_by_apriori_support", 30,
 		"The number of top insights to return, ranked by apriori support.")
 	pruningMethodParameter := tools.NewStringParameterWithDefault("pruning_method", "PRUNE_REDUNDANT_INSIGHTS",
@@ -162,23 +162,15 @@ func (t Tool) Invoke(ctx context.Context, params tools.ParamValues, accessToken 
 	paramsMap := params.AsMap()
 	inputData, ok := paramsMap["input_data"].(string)
 	if !ok {
-		return nil, fmt.Errorf("missing required parameter: input_data")
-	}
-	contributionMetric, ok := paramsMap["contribution_metric"].(string)
-	if !ok {
-		return nil, fmt.Errorf("missing required parameter: contribution_metric")
-	}
-	isTestCol, ok := paramsMap["is_test_col"].(string)
-	if !ok {
-		return nil, fmt.Errorf("missing required parameter: is_test_col")
+		return nil, fmt.Errorf("unable to cast input_data parameter %s", paramsMap["input_data"])
 	}
 
 	modelID := fmt.Sprintf("contribution_analysis_model_%s", strings.ReplaceAll(uuid.New().String(), "-", ""))
 
 	var options []string
 	options = append(options, "MODEL_TYPE = 'CONTRIBUTION_ANALYSIS'")
-	options = append(options, fmt.Sprintf("CONTRIBUTION_METRIC = '%s'", contributionMetric))
-	options = append(options, fmt.Sprintf("IS_TEST_COL = '%s'", isTestCol))
+	options = append(options, fmt.Sprintf("CONTRIBUTION_METRIC = '%s'", paramsMap["contribution_metric"]))
+	options = append(options, fmt.Sprintf("IS_TEST_COL = '%s'", paramsMap["is_test_col"]))
 
 	if val, ok := paramsMap["dimension_id_cols"]; ok {
 		if cols, ok := val.([]any); ok {
@@ -187,6 +179,8 @@ func (t Tool) Invoke(ctx context.Context, params tools.ParamValues, accessToken 
 				strCols = append(strCols, fmt.Sprintf("'%s'", c))
 			}
 			options = append(options, fmt.Sprintf("DIMENSION_ID_COLS = [%s]", strings.Join(strCols, ", ")))
+		} else {
+			return nil, fmt.Errorf("unable to cast dimension_id_cols parameter %s", paramsMap["dimension_id_cols"])
 		}
 	}
 	if val, ok := paramsMap["top_k_insights_by_apriori_support"]; ok {
@@ -285,11 +279,7 @@ func (t Tool) Invoke(ctx context.Context, params tools.ParamValues, accessToken 
 
 	// This handles the standard case for a SELECT query that successfully
 	// executes but returns zero rows.
-	if strings.HasPrefix(strings.TrimSpace(strings.ToUpper(getInsightsSQL)), "SELECT") {
-		return "The query returned 0 rows.", nil
-	}
-
-	return "Query executed successfully and returned no content.", nil
+	return "The query returned 0 rows.", nil
 }
 
 func (t Tool) ParseParams(data map[string]any, claims map[string]map[string]any) (tools.ParamValues, error) {

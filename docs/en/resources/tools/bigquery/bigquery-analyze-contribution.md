@@ -1,7 +1,7 @@
 ---
 title: "bigquery-analyze-contribution"
 type: docs
-weight: 2
+weight: 1
 description: >
   A "bigquery-analyze-contribution" tool performs contribution analysis in BigQuery.
 aliases:
@@ -14,7 +14,7 @@ A `bigquery-analyze-contribution` tool performs contribution analysis in BigQuer
 
 It's compatible with the following sources:
 
-- bigquery
+- [bigquery](../../sources/bigquery.md)
 
 `bigquery-analyze-contribution` takes the following parameters:
 
@@ -22,7 +22,7 @@ It's compatible with the following sources:
 - **contribution_metric** (string, required): The name of the column that contains the metric to analyze. This can be SUM(metric_column_name), SUM(numerator_metric_column_name)/SUM(denominator_metric_column_name) or SUM(metric_sum_column_name)/COUNT(DISTINCT categorical_column_name) depending the type of metric to analyze.
 - **is_test_col** (string, required): The name of the column that identifies whether a row is in the test or control group. The column must contain boolean values.
 - **dimension_id_cols** (array of strings, optional): An array of column names that uniquely identify each dimension.
-- **top_k_insights_by_apriori_support** (integer, optional): The number of top insights to return, ranked by apriori support.
+- **top_k_insights_by_apriori_support** (integer, optional): The number of top insights to return, ranked by apriori support. Default to '30'.
 - **pruning_method** (string, optional): The method to use for pruning redundant insights. Can be `'NO_PRUNING'` or `'PRUNE_REDUNDANT_INSIGHTS'`. Defaults to `'PRUNE_REDUNDANT_INSIGHTS'`.
 
 
