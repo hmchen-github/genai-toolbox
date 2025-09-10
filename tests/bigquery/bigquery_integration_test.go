@@ -1112,6 +1112,7 @@ func runBigQueryAnalyzeContributionToolInvokeTest(t *testing.T, tableName string
 	if err != nil {
 		t.Fatalf("error getting access token from ADC: %s", err)
 	}
+	accessToken = "Bearer " + accessToken
 
 	dataTable := strings.ReplaceAll(tableName, "`", "")
 
