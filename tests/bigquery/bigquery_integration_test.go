@@ -592,6 +592,7 @@ func runBigQueryExecuteSqlToolInvokeTest(t *testing.T, select1Want, invokeParamW
 	if err != nil {
 		t.Fatalf("error getting access token from ADC: %s", err)
 	}
+	accessToken = "Bearer " + accessToken
 
 	// Test tool invoke endpoint
 	invokeTcs := []struct {
@@ -874,6 +875,7 @@ func runBigQueryForecastToolInvokeTest(t *testing.T, tableName string) {
 	if err != nil {
 		t.Fatalf("error getting access token from ADC: %s", err)
 	}
+	accessToken = "Bearer " + accessToken
 
 	historyDataTable := strings.ReplaceAll(tableName, "`", "")
 	historyDataQuery := fmt.Sprintf("SELECT ts, data, id FROM %s", tableName)
@@ -1210,6 +1212,7 @@ func runBigQueryListDatasetToolInvokeTest(t *testing.T, datasetWant string) {
 	if err != nil {
 		t.Fatalf("error getting access token from ADC: %s", err)
 	}
+	accessToken = "Bearer " + accessToken
 
 	// Test tool invoke endpoint
 	invokeTcs := []struct {
@@ -1331,6 +1334,7 @@ func runBigQueryGetDatasetInfoToolInvokeTest(t *testing.T, datasetName, datasetI
 	if err != nil {
 		t.Fatalf("error getting access token from ADC: %s", err)
 	}
+	accessToken = "Bearer " + accessToken
 
 	// Test tool invoke endpoint
 	invokeTcs := []struct {
@@ -1480,6 +1484,7 @@ func runBigQueryListTableIdsToolInvokeTest(t *testing.T, datasetName, tablename_
 	if err != nil {
 		t.Fatalf("error getting access token from ADC: %s", err)
 	}
+	accessToken = "Bearer " + accessToken
 
 	// Test tool invoke endpoint
 	invokeTcs := []struct {
@@ -1629,6 +1634,7 @@ func runBigQueryGetTableInfoToolInvokeTest(t *testing.T, datasetName, tableName,
 	if err != nil {
 		t.Fatalf("error getting access token from ADC: %s", err)
 	}
+	accessToken = "Bearer " + accessToken
 
 	// Test tool invoke endpoint
 	invokeTcs := []struct {
@@ -1778,6 +1784,7 @@ func runBigQueryConversationalAnalyticsInvokeTest(t *testing.T, datasetName, tab
 	if err != nil {
 		t.Fatalf("error getting access token from ADC: %s", err)
 	}
+	accessToken = "Bearer " + accessToken
 
 	tableRefsJSON := fmt.Sprintf(`[{"projectId":"%s","datasetId":"%s","tableId":"%s"}]`, BigqueryProject, datasetName, tableName)
 
